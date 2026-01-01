@@ -1,0 +1,33 @@
+.container-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.header-login,
+.text-muted-login {
+    text-align: center;
+}
+
+.text-muted-login {
+    margin-bottom: 4rem;
+}
+
+.button-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (min-width: 992px) {
+    .container-login {
+        max-width: 992px;
+        margin: 0 auto;
+    }
+
+    .container-box {
+        width: 60%;
+    }
+}

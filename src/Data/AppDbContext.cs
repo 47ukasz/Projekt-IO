@@ -12,6 +12,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>{
 
         modelBuilder.Entity<ApplicationUser>(entity => {
             entity.Property(e => e.EnableNotifications).HasDefaultValue(true);
+            entity.Property(e => e.LastName).HasDefaultValue("");
         });
     }
 }

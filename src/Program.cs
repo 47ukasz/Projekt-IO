@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.Entities;
+using projekt_io.Services;
 
 namespace projekt_io;
 
@@ -15,6 +16,25 @@ public class Program {
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+        // potem mozemy to usunac jak cos, tymczasowo zeby walidacja byla prostsza 
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 6;
+
+            options.User.RequireUniqueEmail = true;
+        });
+        
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        
+        builder.Services.ConfigureApplicationCookie(options => {
+            options.LoginPath = "/login";
+            options.LogoutPath = "/logout";
+            options.AccessDeniedPath = "/access-denied";
+        });
         
         var app = builder.Build();
 

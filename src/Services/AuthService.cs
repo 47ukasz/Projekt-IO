@@ -1,4 +1,6 @@
+using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using projekt_io.Data;
 using projekt_io.DTOs.Auth;
 using projekt_io.Entities;
@@ -37,7 +39,7 @@ public class AuthService : IAuthService {
         if (!result.Succeeded) {
             return false;
         }
-
+        
         return true;
     }
 
@@ -56,8 +58,8 @@ public class AuthService : IAuthService {
         return true;
     }
 
-    public bool LogoutAsync() {
-        throw new NotImplementedException();
+    public Task LogoutAsync() {
+        return _signInManager.SignOutAsync();
     }
 
     public bool ActivateAccountAsync(string token) {

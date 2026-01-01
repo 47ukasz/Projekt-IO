@@ -21,45 +21,41 @@
       </div>
       <div class="container-box">
         <form asp-controller="Account" asp-action="Register" method="POST">
+          @Html.AntiForgeryToken()
           <div class="input-box">
             <label asp-for="Email">Adres e-mail</label>
             <input
               asp-for="Email"
               type="text"
-              placeholder="Wpisz swój adres e-mail"
-            />
+              placeholder="Wpisz swój adres e-mail"/>
           </div>
           <div class="input-box">
             <label asp-for="FirstName">Imię</label>
             <input
               asp-for="FirstName"
               type="text"
-              placeholder="Wpisz swoje imię"
-            />
+              placeholder="Wpisz swoje imię"/>
           </div>
           <div class="input-box">
             <label asp-for="SecondName">Nazwisko</label>
             <input
               asp-for="SecondName"
               type="text"
-              placeholder="Wpisz swoje nazwisko"
-            />
+              placeholder="Wpisz swoje nazwisko"/>
           </div>
           <div class="input-box">
             <label asp-for="Password">Hasło</label>
             <input
               asp-for="Password"
               type="password"
-              placeholder="Wpisz swoje hasło"
-            />
+              placeholder="Wpisz swoje hasło"/>
           </div>
           <div class="input-box">
             <label asp-for="ConfirmPassword">Powtórz Hasło</label>
             <input
               asp-for="ConfirmPassword"
               type="password"
-              placeholder="Powtórz swoje hasło"
-            />
+              placeholder="Powtórz swoje hasło"/>
           </div>
           <div asp-validation-summary="All" class="form-validation"></div>
           <div class="button-box">

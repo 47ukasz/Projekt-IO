@@ -21,21 +21,20 @@
     </div>
     <div class="container-box">
         <form asp-controller="Account" asp-action="Login" method="POST">
+            @Html.AntiForgeryToken()
             <div class="input-box">
                 <label asp-for="Email">Adres e-mail</label>
                 <input
                     asp-for="Email"
                     type="text"
-                    placeholder="Wpisz swój adres e-mail"
-                />
+                    placeholder="Wpisz swój adres e-mail"/>
             </div>
             <div class="input-box">
                 <label asp-for="Password">Hasło</label>
                 <input
                     asp-for="Password"
                     type="password"
-                    placeholder="Wpisz swoje hasło"
-                />
+                    placeholder="Wpisz swoje hasło"/>
             </div>
             <div asp-validation-summary="All" class="form-validation"></div>
             <div class="button-box">

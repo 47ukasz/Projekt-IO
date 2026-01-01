@@ -29,6 +29,7 @@ public class Program {
         });
         
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddTransient<IEmailService, EmailService>();
         
         builder.Services.ConfigureApplicationCookie(options => {
             options.LoginPath = "/login";

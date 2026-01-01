@@ -5,6 +5,6 @@ namespace projekt_io.Services;
 public interface IAuthService {
     public Task<bool> RegisterAsync(RegisterDto registerDto);
     public Task<bool> LoginAsync(LoginDto loginDto);
-    public bool LogoutAsync();
+    public Task LogoutAsync();
     public bool ActivateAccountAsync(string token);
 }

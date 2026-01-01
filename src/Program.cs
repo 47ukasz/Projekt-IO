@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
+using projekt_io.Entities;
 
 namespace projekt_io;
 
@@ -12,6 +14,8 @@ public class Program {
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

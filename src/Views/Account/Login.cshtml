@@ -42,6 +42,23 @@
                 <a href="/register" class="btn btn-outline" role="button">Zarejestruj się</a>
             </div>
         </form>
+        @if (TempData["Success"] != null) {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Info"] != null) {
+            <div class="alert alert-info">
+                @TempData["Info"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null) {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
     </div>
 </div>
 </body>

@@ -15,7 +15,7 @@ public class Program {
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
         // potem mozemy to usunac jak cos, tymczasowo zeby walidacja byla prostsza 
         builder.Services.Configure<IdentityOptions>(options =>
         {
@@ -26,9 +26,11 @@ public class Program {
             options.Password.RequiredLength = 6;
 
             options.User.RequireUniqueEmail = true;
+            options.SignIn.RequireConfirmedEmail = true;
         });
         
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
         
         builder.Services.ConfigureApplicationCookie(options => {

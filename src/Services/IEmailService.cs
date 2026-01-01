@@ -1,5 +1,7 @@
+using projekt_io.Entities;
+
 namespace projekt_io.Services;
 
 public interface IEmailService {
-    public Task SendEmailAsync(string email, string subject, string message);
+    public void SendConfirmationEmail(ApplicationUser user, string url);
 }

@@ -1,0 +1,89 @@
+.heading-box {
+    display: block;
+}
+
+.header-info {
+    margin: 3rem 0;
+    font-size: 2.6rem;
+}
+
+.searchbar,
+.pagination-menu,
+.admin-panel {
+    display: none;
+}
+
+.admin-panel-mobile {
+    padding: 1rem;
+    font-size: 2.6rem;
+    color: #fff;
+    background-color: var(--red);
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.admin-panel table {
+    margin: 5rem 0;
+    width: 100%;
+    border-spacing: 0;
+    border: 1px solid var(--light-gray);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.admin-panel th,
+.admin-panel td {
+    padding: 1rem 1.5rem;
+    font-size: 1.4rem;
+    text-align: left;
+}
+
+.admin-panel th {
+    background-color: var(--table-gray);
+}
+
+.admin-panel tr:nth-child(even) {
+    background-color: var(--table-gray);
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn i.fa-2xl {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .searchbar,
+    .admin-panel {
+        display: block;
+    }
+
+    .pagination-menu {
+        display: flex;
+    }
+
+    .admin-panel-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 992px) {
+    .admin-panel th,
+    .admin-panel td {
+        padding: 2rem 1.5rem;
+
+        font-size: 1.6rem;
+    }
+
+    .delete-btn i.fa-2xl {
+        display: block;
+    }
+
+    .delete-btn i.fa-xl {
+        display: none;
+    }
+}

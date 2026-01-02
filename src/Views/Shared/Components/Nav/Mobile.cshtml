@@ -1,0 +1,48 @@
+@model NavViewModel
+
+<div class="nav-mobile">
+    <button class="nav-back-btn">
+        <i
+            class="fa-solid fa-arrow-left-long fa-2xl"
+            style="color: #78c841">
+        </i>
+    </button>
+
+    <nav>
+        <div class="nav-box">
+            <a href="/home">
+                <img
+                    class="logo"
+                    src="~/img/logo.png"
+                    alt="Logo aplikacji"
+                />
+            </a>
+        </div>
+        <div class="nav-box">
+            <ul class="nav-list">
+                @foreach (var (text, url) in Model.NavItems) {
+                    <li><a href="@url">@text</a></li>
+                }
+            </ul>
+        </div>
+        @if (!Model.IsAuthenticated) {
+
+            <div class="nav-box nav-box-buttons">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-login">Logowanie</a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-register">Rejestracja</a>
+            </div>
+        }
+        else {
+            <div class="nav-box nav-box-buttons">
+              <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Wyloguj</a>
+              <a href="/user-page">
+                <img
+                  class="avatar"
+                  src="~/img/avatar.png"
+                  alt="Awatar użytkownika"
+                />
+              </a>
+            </div>
+        }
+    </nav>
+</div>

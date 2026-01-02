@@ -85,8 +85,7 @@ public class AccountController : Controller {
         return RedirectToAction("Login", "Account");
     }
 
-    [HttpPost("logout")]
-    [ValidateAntiForgeryToken]
+    [HttpGet("logout")]
     public async Task<IActionResult> Logout() {
         await _authService.LogoutAsync();
         return RedirectToAction("Login", "Account");

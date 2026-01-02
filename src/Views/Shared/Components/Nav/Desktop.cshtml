@@ -1,0 +1,41 @@
+@model NavViewModel
+
+<div class="container">
+    <nav class="nav">
+        <div class="nav-box">
+            <a href="/home">
+                <img
+                    class="logo"
+                    src="~/img/logo.png"
+                    alt="Logo aplikacji"
+                />
+            </a>
+            <ul class="nav-list-desktop">
+                @foreach (var (text, url) in Model.NavItems) {
+                    <li><a href="@url">@text</a></li>
+                }
+            </ul>
+        </div>
+        <div class="nav-box">
+            @if (!Model.IsAuthenticated) {
+                <div class="nav-box-desktop">
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-login">Logowanie</a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-register">Rejestracja</a>
+                </div>
+            } else {
+                <div class="nav-box-desktop">
+                    <a asp-controller="Account" asp-action="Logout" class="btn btn-primary">Wyloguj</a>
+                    <a href="/user-page">
+                        <img
+                            class="avatar"
+                            src="~/img/avatar.png"
+                            alt="Awatar użytkownika"/>
+                    </a>
+                </div>
+            }
+            <button class="nav-menu">
+                <i class="fa-solid fa-bars fa-2xl" style="color: #78c841"></i>
+            </button>
+        </div>
+    </nav>
+</div>

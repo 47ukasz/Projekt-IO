@@ -1,0 +1,117 @@
+@model AdminPanelViewModel
+
+@{
+  ViewData["Title"] = "Panel Administratora";
+}
+
+@section Styles {
+  <link rel="stylesheet" href="~/css/main.css" />
+  <link rel="stylesheet" href="~/css/user-page.css" />
+  <link rel="stylesheet" href="~/css/home.css" />
+  <link rel="stylesheet" href="~/css/admin.css" />
+}
+
+@section Scripts {
+  <script src="~/js/main.js" defer></script>
+  <script src="~/js/modal-admin.js" defer></script>
+}
+
+
+<div class="background">
+  <div class="modal">
+    <p class="modal-title">Czy na pewno chcesz usunąć użytkownika "<span></span>"?</p>
+    <form action="offer-delete" method="post" class="modal-form">
+      <input type="text" hidden id="modal-input" />
+      <button class="btn btn-reset" type="button">Anuluj</button>
+      <button class="btn btn-primary" type="submit">Potwierdź</button>
+    </form>
+  </div>
+</div>
+
+
+<div class="heading-box">
+  <h1 class="header">Panel administratora</h1>
+  <p class="header-info">Lista Użytkowników</p>
+</div>
+
+@if (Model.Users.Count > 0) { 
+  <div class="searchbar">
+    <form class="search" action="">
+      <div class="input-box">
+        <label>Czego szukasz?</label>
+        <input type="text" placeholder="Wprowadź nazwę użytkownika"/>
+      </div>
+      <div class="searchbar-btn">
+        <button class="btn btn-search">Szukaj</button>
+        <button class="btn btn-reset">
+          <i class="fa-solid fa-xmark fa-2xl" style="color: #ff9b2f"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+<section>
+  <p class="admin-panel-mobile">
+    Lista użytkowników nie jest obsługiwana w wersji mobilnej.
+  </p>
+  @if (Model.Users.Count > 0) { 
+    <div class="admin-panel">
+    
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nazwa użytkownika</th>
+            <th>Email</th>
+            <th>Data rejestracji</th>
+            <th>Akcje</th>
+          </tr>
+        </thead>
+      
+        <tbody>
+          @foreach (var user in Model.Users) {
+            <tr data-id="@user.Id">
+              <td></td>
+              <td id="full-name">@user.FirstName @user.LastName</td>
+              <td>@user.Email</td>
+              <td>2025-01-15</td>
+              <td>
+                <button class="delete-btn modal-trigger">
+                  <i
+                    class="fa-solid fa-trash fa-xl"
+                    style="color: #fb4141"></i>
+                  <i
+                    class="fa-solid fa-trash fa-2xl"
+                    style="color: #fb4141"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (Model.Users.Count > 0) { 
+  <section>
+    <div class="pagination-menu">
+      <button>
+        <i class="fa-solid fa-angle-left fa-2xl" style="color: #000"></i>
+      </button>
+      <ul class="pagination-list">
+        <li class="selected">1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>...</li>
+        <li>10</li>
+      </ul>
+      <button>
+        <i class="fa-solid fa-angle-right fa-2xl" style="color: #000"></i>
+      </button>
+    </div>
+  </section>
+}
+

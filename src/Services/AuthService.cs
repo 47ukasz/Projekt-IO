@@ -51,7 +51,13 @@ public class AuthService : IAuthService {
         if (loginDto == null) {
             return false;
         }
+        
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
+        if (user == null || user.Blocked) {
+            return false;
+        }
+        
         var result = await _signInManager.PasswordSignInAsync(userName: loginDto.Email,
             password: loginDto.Password, false, false);
 

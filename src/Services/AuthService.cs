@@ -37,10 +37,12 @@ public class AuthService : IAuthService {
         };
         
         var result = await _userManager.CreateAsync(user, registerDto.Password);
-
+        
         if (!result.Succeeded) {
             return false;
         }
+        
+        await _userManager.AddToRoleAsync(user, "User");
         
         return true;
     }

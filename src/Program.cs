@@ -7,7 +7,7 @@ using projekt_io.Services;
 namespace projekt_io;
 
 public class Program {
-    public static void Main(string[] args) {
+    public static async Task Main(string[] args) {
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -53,12 +53,27 @@ public class Program {
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        app.Run();
+        using (var scope = app.Services.CreateScope()) {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            List<string> roles = new List<string> { "Admin", "Owner", "Seeker", "User" };
+
+            foreach (var role in roles) {
+                var exists = await roleManager.RoleExistsAsync(role);
+
+                if (!exists) {
+                    await roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        }
+        
+        await app.RunAsync();
     }
 }

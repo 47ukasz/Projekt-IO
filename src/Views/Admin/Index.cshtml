@@ -2,6 +2,8 @@
 
 @{
   ViewData["Title"] = "Panel Administratora";
+
+  var userNumber = 1;
 }
 
 @section Styles {
@@ -12,16 +14,33 @@
 }
 
 @section Scripts {
-  <script src="~/js/modal.js" defer></script>
+  <script src="~/js/confirm-modal.js" defer></script>
+  <script src="~/js/roles-modal.js" defer></script>
 }
 
-@await Component.InvokeAsync("Modal", new ModalViewModel() {
+@await Component.InvokeAsync("ConfirmModal", new ConfirmModalViewModel() {
   Id = "deleteUserModal",
   Title = "Czy na pewno chcesz usunąć użytkownika?",
   Action= "Delete",
   Controller = "Admin",
   ConfirmText = "Potwierdź",
   CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync(name: "ConfirmModal", new ConfirmModalViewModel() {
+  Id = "blockUserModal",
+  Title = "Czy na pewno chcesz zablokować użytkownika?",
+  Action = "BlockUser",
+  Controller = "Admin",
+  ConfirmText = "Potwierdź",
+  CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync("RolesModal", new RolesModalViewModel() {
+  Id = "manageRolesModal",
+  Title = "Edytuj role użytkownika",
+  Action = "UpdateRoles",
+  Controller = "Admin"
 })
 
 <div class="heading-box">
@@ -59,30 +78,53 @@
             <th>ID</th>
             <th>Nazwa użytkownika</th>
             <th>Email</th>
-            <th>Data rejestracji</th>
+            <th>Status konta</th>
+            <th>Role</th>
             <th>Akcje</th>
           </tr>
         </thead>
       
         <tbody>
-          @foreach (var user in Model.Users) {
-            <tr data-id="@user.Id">
-              <td></td>
-              <td id="full-name">@user.FirstName @user.LastName</td>
-              <td>@user.Email</td>
-              <td>2025-01-15</td>
-              <td>
-                <button class="delete-btn" data-modal-open="deleteUserModal" data-value="@user.Id">
-                  <i
-                    class="fa-solid fa-trash fa-xl"
-                    style="color: #fb4141"></i>
-                  <i
-                    class="fa-solid fa-trash fa-2xl"
-                    style="color: #fb4141"></i>
-                </button>
-              </td>
-            </tr>
-          }
+        @foreach (var user in Model.Users) {
+          <tr data-id="@user.Id">
+            <td>@userNumber</td>
+            <td id="full-name">@user.FirstName @user.LastName</td>
+            <td>@user.Email</td>
+            @if (@user.Blocked) {
+              <td>Zablokowany</td>
+            } else {
+              <td>Aktywny</td>
+            }
+            <td>
+              @foreach (var role in user.Roles) {
+                <span>@role </span>
+              }
+            </td>
+            <td>
+              <button class="btn-admin-delete" data-modal-open="deleteUserModal" data-value="@user.Id" title="Usuń użytkownika">
+                <i
+                  class="fa-solid fa-trash fa-xl"
+                  style="color: #fb4141"></i>
+                <i
+                  class="fa-solid fa-trash fa-2xl"
+                  style="color: #fb4141"></i>
+              </button>
+              <a class="btn-admin-profile" title="Profil użytkownika">
+                <i class="fa-solid fa-user fa-xl" style="color: #a2a2a2"></i>
+                <i class="fa-solid fa-user fa-2xl" style="color: #a2a2a2"></i>
+              </a>
+              <button class="btn-admin-block" data-modal-open="blockUserModal" data-value="@user.Id" title="Zablokuj użytkownika">
+                <i class="fa-solid fa-ban fa-xl" style="color: #ff9b2f"></i>
+                <i class="fa-solid fa-ban fa-2xl" style="color: #ff9b2f"></i>
+              </button>
+              <button class="btn-admin-edit" data-role-modal-open="manageRolesModal" data-value="@user.Id" data-roles="@string.Join(",", user.Roles)">
+                <i class="fa-solid fa-pen-to-square fa-xl"></i>
+                <i class="fa-solid fa-pen-to-square fa-2xl"></i>
+              </button>
+            </td>
+          </tr>
+          userNumber = userNumber + 1;
+        }
         </tbody>
       </table>
     </div>
@@ -110,3 +152,22 @@
   </section>
 }
 
+@if (TempData["success"] != null || TempData["error"] != null) {
+  <section class="notifications">
+
+    @if (TempData["success"] != null) {
+      <div class="notification notification-success">
+        <i class="fa-solid fa-circle-check fa-xl" style="color: #fff"></i>
+        <span>@TempData["success"]</span>
+      </div>
+    }
+
+    @if (TempData["error"] != null) {
+      <div class="notification notification-error">
+        <i class="fa-solid fa-circle-xmark fa-xl" style="color: #fff"></i>
+        <span>@TempData["error"]</span>
+      </div>
+    }
+
+  </section>
+}

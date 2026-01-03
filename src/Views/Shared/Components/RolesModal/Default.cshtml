@@ -1,0 +1,28 @@
+@model RolesModalViewModel
+
+<div class="background">
+    <div class="modal" id="@Model.Id">
+        <p class="modal-title">@Model.Title</p>
+
+        <form asp-controller="@Model.Controller" asp-action="@Model.Action" method="post" class="modal-roles-form">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="userId" class="modal-input" />
+
+            <ul class="modal-roles">
+                @foreach (var role in Model.AvailableRoles)
+                {
+                    <li>
+                        <input type="checkbox" name="roles" value="@role" class="modal-checkbox" />
+                        <label>@role</label>
+                    </li>
+                }
+            </ul>
+
+            <div class="modal-roles-actions">
+                <button type="button" class="btn btn-reset" data-role-modal-close="closeModal">Anuluj</button>
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+            </div>
+        </form>
+    </div>
+</div>

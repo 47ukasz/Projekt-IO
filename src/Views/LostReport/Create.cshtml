@@ -1,0 +1,78 @@
+@model LostReportFormViewModel
+
+@{
+    ViewData["Title"] = "Dodaj zgłoszenie";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="stylesheet" href="~/css/form.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+}
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="~/js/map.js" defer></script>
+}
+
+<h1 class="header">Dodaj zgłoszenie</h1>
+
+<form asp-controller="LostReport" asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label asp-for="Name">Imię zwierzaka</label>
+            <input type="text" asp-for="Name" placeholder="Podaj imię zwierzaka">
+        </div>
+
+        <div class="input-box">
+            <label asp-for="Species">Gatunek</label>
+            <input type="text" asp-for="Species" placeholder="Podaj gatunek zwierzaka">
+        </div>
+
+        <div class="input-box">
+            <label asp-for="Breed">Rasa (Opcjonalnie)</label>
+            <input type="text" asp-for="Breed" placeholder="Podaj rasę zwierzaka">
+        </div>
+
+        <div class="input-box">
+            <label asp-for="Description">Opis zwierzęcia</label>
+            <textarea asp-for="Description" placeholder="Podaj opis zwierzaka"></textarea>
+        </div>
+    </div>
+
+    <div class="container-box">
+        <div class="input-box">
+            <label asp-for="Title">Tytuł zgłoszenia</label>
+            <input type="text" asp-for="Title" placeholder="Podaj tytuł zgłoszenia">
+        </div>
+        
+        <div class="input-box">
+            <label asp-for="MissingDate">Data zaginięcia</label>
+            <input asp-for="MissingDate" type="date"/>
+        </div>
+    </div>
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label>Lokalizacja</label>
+            <input asp-for="Lat" type="hidden" id="Lat"/>
+            <input asp-for="Lng" type="hidden" id="Lng"/>
+
+            <div id="map" class="form-map"></div>
+            <p id="coordsInfo" class="form-map-info">Nie wybrano lokalizacji</p>
+        </div>
+    </div>
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label asp-for="Photo">Zdjęcie</label>
+            <input asp-for="Photo" type="file" accept="image/png,image/jpeg,image/jpg" />
+        </div>
+    </div>
+
+    <div asp-validation-summary="All" class="form-validation"></div>
+    
+    <button type="submit" class="btn btn-primary">Dodaj zgłoszenie</button>
+</form>

@@ -3,9 +3,9 @@ using projekt_io.Models;
 
 namespace projekt_io.ViewComponents;
 
-public class ModalViewComponent : ViewComponent{
+public class ConfirmModalViewComponent : ViewComponent{
 
-    public IViewComponentResult Invoke(ModalViewModel viewModel) {
+    public IViewComponentResult Invoke(ConfirmModalViewModel viewModel) {
         return View(viewModel);
     }
     

@@ -31,6 +31,7 @@ public class Program {
         
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ILostReportService, LostReportService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
         
         builder.Services.ConfigureApplicationCookie(options => {

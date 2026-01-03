@@ -10,10 +10,12 @@ namespace projekt_io.Services;
 public class UserService : IUserService {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly AppDbContext _context;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UserService(UserManager<ApplicationUser> userManager, AppDbContext context) {
+    public UserService(UserManager<ApplicationUser> userManager, AppDbContext context, RoleManager<IdentityRole> roleManager) {
         _userManager = userManager;
         _context = context;
+        _roleManager = roleManager;
     }
 
     public async Task<List<UserDto>> GetAllUsersAsync() {
@@ -38,6 +40,7 @@ public class UserService : IUserService {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
         if (user == null) {
+            Console.WriteLine($"User {userId} not found");
             return false;
         }
 
@@ -82,4 +85,34 @@ public class UserService : IUserService {
         return userDto;
     }
 
+    public async Task<bool> ChangeUserRoles(string userId, string currentUserId, List<string> roles) {
+        if (string.IsNullOrEmpty(userId) || roles == null || roles.Count == 0) {
+            return false;
+        }
+        
+        var user = await _userManager.FindByIdAsync(userId);
+        var isCurrentUserChanging = userId == currentUserId;
+        
+        if (user == null) {
+            return false;
+        }
+        
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        var rolesToAdd = roles.Except(currentRoles).ToList();
+        var rolesToRemove = currentRoles.Except(roles).ToList();
+
+        if (isCurrentUserChanging && currentRoles.Contains("Admin") && !roles.Contains("Admin")) {
+            return false;
+        }
+        
+        if (rolesToAdd.Count > 0) {
+            await _userManager.AddToRolesAsync(user, rolesToAdd);
+        }
+
+        if (rolesToRemove.Count > 0) {
+            await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+        }
+
+        return true;
+    }
 }

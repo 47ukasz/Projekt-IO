@@ -72,6 +72,8 @@ pnpm-debug.log*
 *.mdf
 *.ldf
 
+uploads/
+
 Web.config.user
 appsettings.Development.json
 appsettings.Local.json

@@ -7,4 +7,7 @@ public class ApplicationUser : IdentityUser {
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public bool Blocked { get; set; }
+    
+    public List<Animal> Animals { get; set; }
+    public List<LostReport> LostReports { get; set; }
 }

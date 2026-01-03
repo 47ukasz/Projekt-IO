@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using projekt_io.Data;
@@ -11,9 +12,11 @@ using projekt_io.Data;
 namespace projekt_io.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260102220514_AddedTablesToLostReportLogic")]
+    partial class AddedTablesToLostReportLogic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,7 +190,7 @@ namespace projekt_io.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Animals");
+                    b.ToTable("Animal");
                 });
 
             modelBuilder.Entity("projekt_io.Entities.ApplicationUser", b =>
@@ -290,7 +293,7 @@ namespace projekt_io.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Location");
                 });
 
             modelBuilder.Entity("projekt_io.Entities.LostReport", b =>
@@ -302,15 +305,15 @@ namespace projekt_io.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LocationId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("LostAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("LostAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -320,8 +323,8 @@ namespace projekt_io.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("UpdatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -335,7 +338,7 @@ namespace projekt_io.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("LostReports");
+                    b.ToTable("LostReport");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

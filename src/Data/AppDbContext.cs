@@ -5,6 +5,10 @@ using projekt_io.Entities;
 namespace projekt_io.Data;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser>{
+    public DbSet<LostReport> LostReports { get; set; }
+    public DbSet<Animal> Animals { get; set; }
+    public DbSet<Location> Locations { get; set; } 
+    
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {

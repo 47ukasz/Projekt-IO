@@ -11,6 +11,8 @@ modalOpenButtons.forEach(button => {
         
         modalInput.value = value;
         
+        console.log(modalInput.value)
+        
         modal.closest(".background").classList.add("background-show");
     })
 })

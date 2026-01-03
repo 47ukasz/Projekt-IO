@@ -1,0 +1,13 @@
+using projekt_io.DTOs;
+using projekt_io.Entities;
+using Riok.Mapperly.Abstractions;
+
+namespace projekt_io.Mappers;
+
+[Mapper]
+public partial class LostReportMapper {
+     [MapperIgnoreTarget(nameof(LostReport.Animal))]
+     [MapperIgnoreTarget(nameof(LostReport.Location))]
+     public static partial LostReportDto ToDto(LostReport dto);
+     public static partial LostReport ToEntity(LostReportDto dto);
+}

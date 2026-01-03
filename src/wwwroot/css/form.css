@@ -1,0 +1,13 @@
+.form-map {
+    width: 100%;
+    height: 40rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 1rem;
+}
+
+.form-map-info {
+    padding: 1rem 0;
+    width: 100%;
+    font-size: 1.6rem;
+    font-weight: bold;
+}

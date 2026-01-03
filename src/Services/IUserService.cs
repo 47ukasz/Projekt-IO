@@ -8,4 +8,5 @@ public interface IUserService {
     public Task<bool> BlockUserAsync(string userId);
     public Task<bool> UnblockUserAsync(string userId);
     public Task<UserDto> GetUserById(string userId);
+    public Task<bool> ChangeUserRoles(string userId, string currentUserId, List<string> roles);
 }

@@ -19,11 +19,6 @@ public class LostReportController : Controller {
         _lostReportService = lostReportService;
         _userManager = userManager;
     }
-
-    [HttpGet("map")]
-    public IActionResult Index() {
-        return View();
-    }
     
     [HttpGet("create")]
     public IActionResult Create() {
@@ -66,6 +61,6 @@ public class LostReportController : Controller {
             return View(model);
         }
         
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Map");
     }
 }

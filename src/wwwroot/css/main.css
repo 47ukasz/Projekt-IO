@@ -29,6 +29,11 @@ textarea {
     padding: 1rem 0;
 }
 
+.header-info {
+    margin: 3rem 0;
+    font-size: 1.5rem;
+}
+
 .container {
     padding: 2rem 3rem;
 }
@@ -63,7 +68,7 @@ textarea {
 .nav-list li a,
 .nav-list-desktop li a {
     text-decoration: none;
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: var(--green);
     font-weight: bold;
 }
@@ -417,6 +422,10 @@ a.btn-outline {
         font-size: 4rem;
     }
 
+    .header-info {
+        font-size: 2rem;
+    }
+    
     .text-muted,
     .btn {
         font-size: 1.6rem;
@@ -461,7 +470,7 @@ a.btn-outline {
 
     .nav-list-desktop {
         display: flex;
-        gap: 2.5rem;
+        gap: 1.5rem;
     }
 
     .avatar {
@@ -482,5 +491,9 @@ a.btn-outline {
 
     .modal-title {
         font-size: 2rem;
+    }
+
+    .nav-list-desktop {
+        gap: 2rem;
     }
 }

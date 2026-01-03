@@ -22,9 +22,7 @@ public class NavViewComponent : ViewComponent {
         var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
         List<(string, string)> navItems = new List<(string, string)>();
         
-        navItems.Add(("Strona główna", "/"));
-        navItems.Add(("Mapa zgłoszeń", "/"));
-        navItems.Add(("Mapa doniesień", "/"));
+        navItems.Add(("Mapa", "/"));
         
         if (isAuthenticated) {
             navItems.Add(("Dodaj zgłoszenie", "/"));

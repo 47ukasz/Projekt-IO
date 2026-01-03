@@ -2,11 +2,6 @@
     display: block;
 }
 
-.header-info {
-    margin: 3rem 0;
-    font-size: 2.6rem;
-}
-
 .searchbar,
 .pagination-menu,
 .admin-panel {

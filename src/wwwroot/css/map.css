@@ -1,0 +1,149 @@
+.map-section {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    padding: 1rem;
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    z-index: 1;
+}
+
+.map-filter {
+    display: none;
+    position: relative;
+    width: fit-content;
+    z-index: 3;
+}
+
+.map-filter-show {
+    display: block;
+}
+
+.map-filter-box {
+    margin-bottom: 2rem;
+    padding: 2.5rem;
+    border-radius: .5rem;
+    border: 1px solid var(--light-gray);
+    background-color: #fff;
+}
+
+.map-filter-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.map-filter-btns button {
+    width: 100%;
+}
+
+.map-input-box {
+    margin-bottom: 2rem;
+}
+
+.map-input-box > input[type="text"], .map-input-box > input[type="date"]  {
+    padding: 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: .5rem;
+    width: 100%;
+}
+
+.map-input-box > input::placeholder {
+    color: var(--gray);
+    font-size: 1.4rem;
+}
+
+.map-input-box > input:focus {
+    outline: none;
+    border: 1px solid var(--dark-blue);
+}
+
+.map-input-box-flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.map-input-box p, .map-input-box > label:first-child {
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--dark-blue);
+}
+
+.map-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.map-btn > i.fa-2xl {
+    display: none;
+}
+
+.segmented {
+    display: flex;
+    gap: 1rem;
+}
+
+.segmented-box {
+    position: relative;
+}
+
+.segmented-box input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.segmented-box label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 10rem;
+    padding: 1.5rem 1rem;
+    border-radius: .5rem;
+    font-size: 1.4rem;
+    border: 1px solid var(--light-gray);
+    background: none;
+    color: #000;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.segmented-box input:checked + label {
+    background-color: var(--green);
+    font-weight: bold;
+    color: #fff;
+    border-color: var(--green);
+}
+
+@media (min-width: 992px) {
+    .map-btn {
+        width: 6.4rem;
+        height: 6.4rem;
+    }
+
+    .map-btn > i.fa-2xl {
+        display: block;
+    }
+
+    .map-btn > i.fa-xl {
+        display: none;
+    }
+}

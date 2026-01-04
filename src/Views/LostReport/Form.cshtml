@@ -1,7 +1,7 @@
 @model LostReportFormViewModel
 
 @{
-    ViewData["Title"] = "Dodaj zgłoszenie";
+    ViewData["Title"] = Model.IsEdit ? "Edytuj zgłoszenie" : "Dodaj zgłoszenie";
 }
 
 @section Styles {
@@ -15,10 +15,12 @@
     <script src="~/js/form-map.js" defer></script>
 }
 
-<h1 class="header">Dodaj zgłoszenie</h1>
+<h1 class="header">@(Model.IsEdit ? "Edytuj zgłoszenie" : "Dodaj zgłoszenie")</h1>
 
-<form asp-controller="LostReport" asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-controller="LostReport" asp-action="@(Model.IsEdit ? "Edit" : "Create")" asp-route-id="@(Model.IsEdit ? Model.Id : null)" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
+    
+    <input type="hidden" asp-for="Id" />
     
     <div class="container-box">
         <div class="input-box">
@@ -74,5 +76,7 @@
 
     <div asp-validation-summary="All" class="form-validation"></div>
     
-    <button type="submit" class="btn btn-primary">Dodaj zgłoszenie</button>
+    <button type="submit" class="btn btn-primary">
+        @(Model.IsEdit ? "Zapisz zmiany" : "Dodaj zgłoszenie")
+    </button>
 </form>

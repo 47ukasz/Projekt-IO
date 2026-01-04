@@ -4,7 +4,7 @@ namespace projekt_io.Models;
 
 public class LostReportFormViewModel {
     public bool IsEdit { get; set; }
-    public int? Id { get; set; }
+    public string? Id { get; set; }
 
     [Required(ErrorMessage = "Podaj imię zwierzaka.")]
     [StringLength(50)]
@@ -25,7 +25,7 @@ public class LostReportFormViewModel {
 
     [Required(ErrorMessage = "Podaj datę zaginięcia.")]
     
-    public DateTime? MissingDate { get; set; } = DateTime.Today;
+    public DateOnly? MissingDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
     [Required(ErrorMessage = "Wybierz lokalizację na mapie.")]
     public string? Lat { get; set; }

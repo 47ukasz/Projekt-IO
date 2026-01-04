@@ -30,10 +30,16 @@ public class Program {
         });
         
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IGeocodingService, GeocodingService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IMapService, MapService>();
         builder.Services.AddScoped<ILostReportService, LostReportService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
+            
+        builder.Services.AddHttpClient("Nominatim", client => {
+            client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
+            client.DefaultRequestHeaders.Add("User-Agent", "projekt-io/1.0 (kontakt@email.pl)");
+        });
         
         builder.Services.ConfigureApplicationCookie(options => {
             options.LoginPath = "/login";
@@ -57,7 +63,7 @@ public class Program {
 
         app.UseAuthentication();
         app.UseAuthorization();
-
+        
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");

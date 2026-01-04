@@ -27,8 +27,8 @@
         <div class="profile-info">
             <p class="profile-title">Mój Profil</p>
 
-            <p class="profile-name">Łukasz Janus</p>
-            <p class="profile-email">luke.dzejnus@gmail.com</p>
+            <p class="profile-name">@Model.UserFullName</p>
+            <p class="profile-email">@Model.UserEmail</p>
         </div>
     </div>
 </section>
@@ -69,7 +69,7 @@
 
 @switch (Model.CurrentTab) {
     case "messages":
-        <partial name="Partials/_ReportsTable" />
+        <partial name="Partials/_MessagesTable" />
         break;
 
     case "notifications":
@@ -85,6 +85,6 @@
         break;
 
     default:
-        <partial name="Partials/_ReportsTable" />
+        <partial name="Partials/_ReportsTable" model="@Model.Reports"/>
         break;
 }

@@ -10,11 +10,13 @@ public class LostReportService : ILostReportService {
     private readonly ILogger<LostReportService> _logger;
     private readonly AppDbContext _db;
     private readonly IWebHostEnvironment _env;
+    private readonly IGeocodingService _geocodingService;
 
-    public LostReportService(ILogger<LostReportService> logger, AppDbContext db, IWebHostEnvironment env) {
+    public LostReportService(ILogger<LostReportService> logger, AppDbContext db, IWebHostEnvironment env, IGeocodingService geocodingService) {
         _logger = logger;
         _db = db;
         _env = env;
+        _geocodingService = geocodingService;
     }
 
     public async Task<bool> CreateAsync(string ownerId, LostReportDto lostReportDto, IFormFile photo) {
@@ -71,11 +73,76 @@ public class LostReportService : ILostReportService {
         }
     }
 
+    public async Task<bool> UpdateAsync(string ownerId, LostReportDto lostReportDto, IFormFile photo) {
+        var reportId = lostReportDto.Id;
+        var reportToUpdate = await _db.LostReports.Include(r => r.Animal).Include(r => r.Location)
+            .FirstOrDefaultAsync(r => r.UserId == ownerId && r.Id == reportId);
+
+        if (reportToUpdate == null) {
+            return false;
+        }
+        
+        reportToUpdate.Title = lostReportDto.Title;
+        reportToUpdate.Status = lostReportDto.Status;
+        reportToUpdate.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+        reportToUpdate.LostAt = lostReportDto.LostAt ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        
+        reportToUpdate.Animal.Name = lostReportDto.Animal.Name;
+        reportToUpdate.Animal.Species = lostReportDto.Animal.Species;
+        reportToUpdate.Animal.Breed = lostReportDto.Animal.Breed;
+        reportToUpdate.Animal.Description = lostReportDto.Animal.Description;
+        
+        reportToUpdate.Location.Latitude = lostReportDto.Location.Latitude;
+        reportToUpdate.Location.Longitude = lostReportDto.Location.Longitude;
+        reportToUpdate.Location.City = await _geocodingService.GetCityAsync(lostReportDto.Location.Latitude, lostReportDto.Location.Longitude);
+
+        if (photo != null && photo.Length > 0) {
+            var photoPath = await SaveAnimalPhotoAsync(photo);
+            
+            reportToUpdate.Animal.PhotoPath = photoPath;
+        }
+        
+        var count = await _db.SaveChangesAsync();
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public async Task<List<LostReportDto>> GetLostReportsByIdAsync(string ownerId) {
+        if (string.IsNullOrWhiteSpace(ownerId)) {
+            return null;
+        }
+        
+        var reports = await _db.LostReports.AsNoTracking().Include(r => r.Animal).Include(r => r.Location).Where(r => r.UserId == ownerId).ToListAsync();
+        var reportDtos = reports.Select(r => LostReportMapper.ToDto(r)).ToList();
+        
+        return reportDtos;
+    }
+
     public async Task<List<LostReportDto>> GetAllLostReportsAsync() {
         var reports = await _db.LostReports.AsNoTracking().Include(r => r.Animal).Include(r => r.Location).ToListAsync();
         
         var reportDtos = reports.Select(r => LostReportMapper.ToDto(r)).ToList();
         return reportDtos;
+    }
+
+    public async Task<LostReportDto> GetLostReportByIdAsync(string ownerId, string reportId) {
+        if (string.IsNullOrWhiteSpace(ownerId) || string.IsNullOrWhiteSpace(reportId)) {
+            return null;
+        }
+        
+        var report = await _db.LostReports.Include(r => r.Animal).Include(r => r.Location).FirstOrDefaultAsync(report => report.UserId == ownerId && report.Id == reportId);
+
+        if (report == null) {
+            return null;
+        }
+        
+        var reportDto = LostReportMapper.ToDto(report);
+        
+        return reportDto;
     }
 
     private async Task<Animal?> CreateAnimalAsync(string ownerId, AnimalDto animalDto, IFormFile photo) {
@@ -99,7 +166,9 @@ public class LostReportService : ILostReportService {
 
     private async Task<Location?> CreateLocationAsync(LocationDto locationDto) {
         var location = LocationMapper.ToEntity(locationDto);
-
+        var city = await _geocodingService.GetCityAsync(location.Latitude, location.Longitude);
+        location.City = city ?? "";
+        
         _db.Locations.Add(location);
 
         var count = await _db.SaveChangesAsync();

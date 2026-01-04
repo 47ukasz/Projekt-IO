@@ -1,3 +1,9 @@
+@model List<projekt_io.DTOs.LostReportDto>
+
+@{
+    var counter = 1;
+}
+
 <section class="profile-section">
     <div class="table-wrapper">
         <div class="table-description">
@@ -18,44 +24,28 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="table-row">
-                    <td>4821</td>
-                    <td>
-                        <div>
-                            <p class="table-type-header">Zaginiony Pies</p>
-                            <p class="table-type-muted">Rasa: Owczarek Niemiecki</p>
-                        </div>
-                    </td>
-                    <td>Warszawa</td>
-                    <td>12 Paź 2023</td>
-                    <td class="table-action-buttons">
-                        <button>
-                            <i class="fa-solid fa-pen fa-xl"></i>
-                        </button>
-                        <button>
-                            <i class="fa-solid fa-check fa-xl"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr class="table-row">
-                    <td>4821</td>
-                    <td>
-                        <div>
-                            <p class="table-type-header">Zaginiony Pies</p>
-                            <p class="table-type-muted">Rasa: Owczarek Niemiecki</p>
-                        </div>
-                    </td>
-                    <td>Warszawa</td>
-                    <td>12 Paź 2023</td>
-                    <td class="table-action-buttons">
-                        <button>
-                            <i class="fa-solid fa-pen fa-xl"></i>
-                        </button>
-                        <button>
-                            <i class="fa-solid fa-check fa-xl"></i>
-                        </button>
-                    </td>
-                </tr>
+                @foreach (var report in Model) {
+                    <tr class="table-row">
+                        <td>#@counter</td>
+                        <td>
+                            <div>
+                                <p class="table-type-header">Zaginiony/a @report.Animal.Species</p>
+                                <p class="table-type-muted">Rasa: @(report.Animal.Breed ?? "Nie podano")</p>
+                            </div>
+                        </td>
+                        <td>@(report.Location.City ?? "-")</td>
+                        <td>@report.LostAt</td>
+                        <td class="table-action-buttons">
+                            <a asp-controller="LostReport" asp-action="Edit" asp-route-id="@report.Id">
+                                <i class="fa-solid fa-pen fa-xl"></i>
+                            </a>
+                            <button>
+                                <i class="fa-solid fa-check fa-xl"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    counter += 1;
+                }
                 </tbody>
             </table>
         </div>

@@ -1,0 +1,90 @@
+@model ProfileViewModel
+
+@{
+    ViewData["Title"] = "Strona użytkownika";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="stylesheet" href="~/css/user-page.css" />
+    <link rel="stylesheet" href="~/css/home.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/profile.css" />
+}
+
+@section Scripts {
+    <script src="~/js/confirm-modal.js" defer></script>
+}
+
+<section class="profile-card profile-section">
+    <div class="profile-card-content">
+        <div class="profile-avatar">
+            <img src="/img/avatar.png" class="profile-avatar-circle" alt="Awatar użytkownika"/>
+            <span class="profile-status-indicator"></span>
+        </div>
+
+        <div class="profile-info">
+            <p class="profile-title">Mój Profil</p>
+
+            <p class="profile-name">Łukasz Janus</p>
+            <p class="profile-email">luke.dzejnus@gmail.com</p>
+        </div>
+    </div>
+</section>
+<section class="profile-nav profile-section overflow">
+    <ul>
+        <li>
+            <a asp-controller="Profile" asp-action="Index" asp-route-tab="reports" class="@(Model.CurrentTab == "reports" ? "profile-nav-active" : "")">
+                <i class="fa-solid fa-clipboard-list"></i
+                ><span>Zgłoszenia</span>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Profile" asp-action="Index" asp-route-tab="sights" class="@(Model.CurrentTab == "sights" ? "profile-nav-active" : "")">
+                <i class="fa-solid fa-clipboard-list"></i
+                ><span>Doniesienia</span>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Profile" asp-action="Index" asp-route-tab="messages" class="@(Model.CurrentTab == "messages" ? "profile-nav-active" : "")">
+                <i class="fa-solid fa-clipboard-list"></i
+                ><span>Wiadomości</span>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Profile" asp-action="Index" asp-route-tab="notifications" class="@(Model.CurrentTab == "notifications" ? "profile-nav-active" : "")">
+                <i class="fa-solid fa-clipboard-list"></i
+                ><span>Powiadomienia</span>
+            </a>
+        </li>
+        <li>
+            <a asp-controller="Profile" asp-action="Index" asp-route-tab="history" class="@(Model.CurrentTab == "history" ? "profile-nav-active" : "")">
+                <i class="fa-solid fa-clipboard-list"></i
+                ><span>Historia zgłoszeń</span>
+            </a>
+        </li>
+    </ul>
+</section>
+
+@switch (Model.CurrentTab) {
+    case "messages":
+        <partial name="Partials/_ReportsTable" />
+        break;
+
+    case "notifications":
+        <partial name="Partials/_NotificationsTable" />
+        break;
+
+    case "history":
+        <partial name="Partials/_HistoryTable" />
+        break;
+
+    case "sights":
+        <partial name="Partials/_SightsTable" />
+        break;
+
+    default:
+        <partial name="Partials/_ReportsTable" />
+        break;
+}

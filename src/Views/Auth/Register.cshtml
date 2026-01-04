@@ -20,7 +20,7 @@
         <p class="text-muted text-muted-login">Stwórz konto aby kontynuować</p>
       </div>
       <div class="container-box">
-        <form asp-controller="Account" asp-action="Register" method="POST">
+        <form asp-controller="Auth" asp-action="Register" method="POST">
           @Html.AntiForgeryToken()
           <div class="input-box">
             <label asp-for="Email">Adres e-mail</label>

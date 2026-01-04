@@ -7,12 +7,12 @@ using projekt_io.Services;
 namespace projekt_io.Controllers;
 
 [Route("")]
-public class AccountController : Controller {
-    private readonly ILogger<AccountController> _logger;
+public class AuthController : Controller {
+    private readonly ILogger<AuthController> _logger;
     private readonly IAuthService _authService;
     private readonly IEmailService _emailService;
     
-    public AccountController(ILogger<AccountController> logger, IAuthService authService, IEmailService emailService) {
+    public AuthController(ILogger<AuthController> logger, IAuthService authService, IEmailService emailService) {
         _logger = logger;
         _authService = authService;
         _emailService = emailService;
@@ -75,20 +75,20 @@ public class AccountController : Controller {
         
         var callbackUrl = Url.Action(
             action: "Activate",
-            controller: "Account",
+            controller: "Auth",
             values: new { userId = user.Id, token = tokenEncoded },
             protocol: Request.Scheme
         );
         
         _emailService.SendConfirmationEmail(user, callbackUrl);
         
-        return RedirectToAction("Login", "Account");
+        return RedirectToAction("Login", "Auth");
     }
 
     [HttpGet("logout")]
     public async Task<IActionResult> Logout() {
         await _authService.LogoutAsync();
-        return RedirectToAction("Login", "Account");
+        return RedirectToAction("Login", "Auth");
     }
 
     [HttpGet("activate")]

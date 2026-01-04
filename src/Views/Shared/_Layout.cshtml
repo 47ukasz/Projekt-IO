@@ -11,8 +11,8 @@
 </head>
 <body>
 @await Component.InvokeAsync("Nav", new { variant = "Mobile" })
-@await Component.InvokeAsync("Nav", new { variant = "Desktop" })
 <div class="container">
+    @await Component.InvokeAsync("Nav", new { variant = "Desktop" })
     <main>
         @RenderBody()
     </main>

@@ -11,7 +11,11 @@
 
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script src="~/js/map.js" defer></script>
+
+    <script>
+        const initialPoints = @Html.Raw(ViewBag.MapPointsJson ?? "[]");
+    </script>
+    
     <script src="~/js/main-map.js" defer></script>
 }
 

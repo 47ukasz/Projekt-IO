@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.DTOs;
 using projekt_io.Entities;
@@ -68,6 +69,13 @@ public class LostReportService : ILostReportService {
             await dbTransaction.RollbackAsync();
             return false;
         }
+    }
+
+    public async Task<List<LostReportDto>> GetAllLostReportsAsync() {
+        var reports = await _db.LostReports.AsNoTracking().Include(r => r.Animal).Include(r => r.Location).ToListAsync();
+        
+        var reportDtos = reports.Select(r => LostReportMapper.ToDto(r)).ToList();
+        return reportDtos;
     }
 
     private async Task<Animal?> CreateAnimalAsync(string ownerId, AnimalDto animalDto, IFormFile photo) {

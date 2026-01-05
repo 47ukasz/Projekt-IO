@@ -260,10 +260,11 @@
 .popup-sight-button {
     text-align: center;
     min-width: 12rem;
+    font-size: 1rem;
     padding: 1rem 0.4rem;
     border-radius: 0.5rem;
-    font-size: 1rem;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .popup-chat-button {

@@ -18,6 +18,7 @@ public class MapService : IMapService {
         foreach (var lostReport in lostReports) {
             var point = new MapPointViewModel {
                 Id = new Guid().ToString(),
+                LostReportId = lostReport.Id,
                 Latitude = lostReport.Location.Latitude,
                 Longitude = lostReport.Location.Longitude,
                 Status = lostReport.Status,

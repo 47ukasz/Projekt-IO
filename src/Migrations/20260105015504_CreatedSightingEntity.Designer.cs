@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using projekt_io.Data;
@@ -11,9 +12,11 @@ using projekt_io.Data;
 namespace projekt_io.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105015504_CreatedSightingEntity")]
+    partial class CreatedSightingEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,9 +367,6 @@ namespace projekt_io.Migrations
                     b.Property<string>("PhotoPath")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateOnly>("SeenDate")
-                        .HasColumnType("date");
 
                     b.Property<string>("UserId")
                         .IsRequired()

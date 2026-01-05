@@ -32,6 +32,7 @@ public class Program {
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IGeocodingService, GeocodingService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ISightingService, SightingService>();
         builder.Services.AddScoped<IMapService, MapService>();
         builder.Services.AddScoped<ILostReportService, LostReportService>();
         builder.Services.AddTransient<IEmailService, EmailService>();

@@ -51,7 +51,7 @@ function renderPoints(points) {
                 </div>
                 <div class="map-popup-buttons">
                     <a class="popup-chat-button"><i class="fa-solid fa-message" style="color: #ff9b2f;"></i> <span>Rozpocznij chat</span></a>
-                    <a class="popup-sight-button"><i class="fa-solid fa-circle-plus" style="color: #fff;"></i> <span>Dodaj doniesienie</span></a>
+                    <a href="/sighting/create/${p.LostReportId}" class="popup-sight-button"><i class="fa-solid fa-circle-plus" style="color: #fff;"></i> <span>Dodaj doniesienie</span></a>
                 </div>
             </div>`;
 

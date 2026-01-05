@@ -8,6 +8,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>{
     public DbSet<LostReport> LostReports { get; set; }
     public DbSet<Animal> Animals { get; set; }
     public DbSet<Location> Locations { get; set; } 
+    public DbSet<Sighting> Sightings { get; set; }
     
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

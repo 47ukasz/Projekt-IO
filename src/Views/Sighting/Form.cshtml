@@ -1,0 +1,59 @@
+@model SightingFormViewModel
+
+@{
+    ViewData["Title"] = Model.IsEdit ? "Edytuj doniesienie" : "Dodaj doniesienie";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="stylesheet" href="~/css/form.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+}
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="~/js/form-map.js" defer></script>
+}
+
+<h1 class="header">@(Model.IsEdit ? "Edytuj doniesienie" : "Dodaj doniesienie")</h1>
+
+<form asp-controller="Sighting" asp-action="@(Model.IsEdit ? "Edit" : "Create")" asp-route-id="@(Model.IsEdit ? Model.Id : null)" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="LostReportId"/>
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label asp-for="Description">Opis zwierzęcia</label>
+            <textarea asp-for="Description" placeholder="Podaj opis zwierzaka"></textarea>
+        </div>
+
+        <div class="input-box">
+            <label asp-for="SeenDate">Data obserwacji</label>
+            <input asp-for="SeenDate" type="date"/>
+        </div>
+    </div>
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label>Lokalizacja</label>
+            <input asp-for="Lat" type="hidden" id="Lat"/>
+            <input asp-for="Lng" type="hidden" id="Lng"/>
+
+            <div id="map" class="form-map"></div>
+            <p id="coordsInfo" class="form-map-info">Nie wybrano lokalizacji</p>
+        </div>
+    </div>
+    
+    <div class="container-box">
+        <div class="input-box">
+            <label asp-for="Photo">Zdjęcie</label>
+            <input asp-for="Photo" type="file" accept="image/png,image/jpeg,image/jpg" />
+        </div>
+    </div>
+
+    <div asp-validation-summary="All" class="form-validation"></div>
+
+    <button type="submit" class="btn btn-primary">
+        @(Model.IsEdit ? "Zapisz zmiany" : "Dodaj doniesienie")
+    </button>
+</form>

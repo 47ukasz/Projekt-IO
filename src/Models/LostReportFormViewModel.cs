@@ -24,7 +24,6 @@ public class LostReportFormViewModel {
     public string Description { get; set; } = "";
 
     [Required(ErrorMessage = "Podaj datę zaginięcia.")]
-    
     public DateOnly? MissingDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
     [Required(ErrorMessage = "Wybierz lokalizację na mapie.")]

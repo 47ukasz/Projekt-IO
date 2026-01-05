@@ -22,7 +22,11 @@ public class LostReportController : Controller {
     
     [HttpGet("create")]
     public IActionResult Create() {
-        return View("Form");
+        var viewModel = new LostReportFormViewModel() {
+            IsEdit = false
+        };
+        
+        return View("Form", viewModel);
     }
 
     [HttpGet("edit/{id}")]
@@ -79,7 +83,7 @@ public class LostReportController : Controller {
             Animal = animalDto,
             Location = locationDto,
             LostAt = viewModel.MissingDate,
-            Status = "lost",
+            Status = "Zaginiony",
             Title = viewModel.Title,
         };
         

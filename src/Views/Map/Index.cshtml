@@ -5,8 +5,8 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/main.css" />
     <link rel="stylesheet" href="~/css/home.css" />
-    <link rel="stylesheet" href="~/css/map.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/css/map.css" />
 }
 
 @section Scripts {
@@ -19,64 +19,72 @@
     <script src="~/js/main-map.js" defer></script>
 }
 
-<div class="heading-box">
-    <h1 class="header">Mapa zgłoszeń</h1>
-    <p class="header-info">Wyszukaj zgłoszeń w twojej okolicy</p>
-</div>
-
 <section class="map-section">
-    <button class="btn btn-primary map-btn">
-        <i class="fa-solid fa-filter fa-xl" style="color: #fff"></i>
-        <i class="fa-solid fa-filter fa-2xl" style="color: #fff"></i>
+    <button class="map-btn">
+        <i class="fa-solid fa-sliders" style="color: #78c841"></i>
+        <span>Filtruj mapę</span>
+        <i class="fa-solid fa-chevron-down"></i>
     </button>
     <div class="map-filter">
-        <form action="">
+        <form>
             <div class="map-filter-box">
-                <div class="map-input-box" style="margin: 0;">
-                    <input type="text" placeholder="Podaj lokalizację">
+                <label>Lokalizacja</label>
+                <div class="map-input-box">
+                    <span><i class="fa-solid fa-location-arrow"></i></span>
+                    <input type="text" placeholder="np. Kraków" />
                 </div>
             </div>
+
             <div class="map-filter-box">
-                <div class="map-input-box">
-                    <p>Wybierz rodzaj</p>
-                    <div class="segmented">
-                        <div class="segmented-box">
-                            <input type="checkbox" id="reportType" name="type" value="report">
-                            <label for="reportType">Zgłoszenie</label>
-                        </div>
+                <label>Rodzaj wpisu</label>
+                <div class="segmented">
+                    <div class="segmented-box">
+                        <input
+                            id="reports"
+                            type="radio"
+                            name="segmented"
+                            value="reports"
+                            checked
+                        />
+                        <label for="reports">Zgłoszenia</label>
+                    </div>
 
-                        <div class="segmented-box">
-                            <input type="checkbox" id="sightingType" name="type" value="sighting">
-                            <label for="sightingType">Doniesienie</label>
-                        </div>
+                    <div class="segmented-box">
+                        <input
+                            id="sights"
+                            type="radio"
+                            name="segmented"
+                            value="sights"
+                        />
+                        <label for="sights">Doniesienia</label>
                     </div>
                 </div>
-                <div class="map-input-box">
-                    <p>Status</p>
-                    <div class="segmented">
-                        <div class="segmented-box">
-                            <input type="checkbox" id="statusLost" name="status" value="lost">
-                            <label for="statusLost">Zagubiony</label>
-                        </div>
+            </div>
 
-                        <div class="segmented-box">
-                            <input type="checkbox" id="statusFound" name="status" value="found">
-                            <label for="statusFound">Znaleziony</label>
-                        </div>
-                    </div>
+            <div class="map-filter-box-flex">
+                <div class="map-filter-box">
+                    <label>Status</label>
+                    <select>
+                        <option>Wszystkie</option>
+                        <option>Zaginiony</option>
+                        <option>Odnaleziony</option>
+                    </select>
                 </div>
-                <div class="map-input-box map-input-box-flex">
-                    <label for="species">Gatunek</label>
-                    <input type="text" id="species" name="species" placeholder="Podaj gatunek">
+
+                <div class="map-filter-box">
+                    <label>Gatunek</label>
+                    <select>
+                        <option>Wszystkie</option>
+                        <option>Pies</option>
+                        <option>Kot</option>
+                        <option>Inne</option>
+                    </select>
                 </div>
-                <div class="map-input-box map-input-box-flex">
-                    <label for="lostAt">Data zgłoszenia</label>
-                    <input type="date" id="lostAt" name="lostAt">
-                </div>
-                <div class="map-filter-btns">
-                    <button class="btn btn-outline">Zamknij</button>
-                    <button type="submit" class="btn btn-search">Filtruj</button>
-                </div>
+            </div>
+
+            <div class="map-filter-buttons">
+                <button type="reset">Wyczyść filtry</button>
+                <button type="submit">Zastosuj</button>
             </div>
         </form>
     </div>

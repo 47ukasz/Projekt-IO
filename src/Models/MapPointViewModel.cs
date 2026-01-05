@@ -5,6 +5,8 @@ public class MapPointViewModel {
     public float Latitude {get; set;}
     public float Longitude {get; set;}
     public string Status {get; set;}
+    public string Species {get; set;}
     public string Title {get; set;}
     public string Type {get; set;}
+    public string PhotoPath {get; set;}
 }

@@ -21,8 +21,10 @@ public class MapService : IMapService {
                 Latitude = lostReport.Location.Latitude,
                 Longitude = lostReport.Location.Longitude,
                 Status = lostReport.Status,
+                Species = lostReport.Animal.Species,
                 Title = lostReport.Title,
-                Type = "Lost"
+                Type = "Zgłoszenie",
+                PhotoPath = lostReport.Animal.PhotoPath,
             };
             
             mapPoints.Add(point);

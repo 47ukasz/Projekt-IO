@@ -5,6 +5,15 @@ filterBtn.addEventListener('click', () => {
     filter.classList.toggle('map-filter-show');
 });
 
+const MarkerIcon = L.Icon.extend({
+    options: {
+        iconSize: [60,60],
+    }
+})
+
+const reportMarkerIcon = new MarkerIcon({iconUrl: "/img/report-marker.png"})
+const sightMarkerIcon = new MarkerIcon({iconUrl: "/img/sight-markers.png"})
+
 const map = L.map('map').setView([52.23, 21.01], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -25,18 +34,28 @@ function renderPoints(points) {
         console.warn('Brak danych do wyświetlenia');
         return;
     }
-
+    
     points.forEach(p => {
-        const marker = L.marker([p.Latitude, p.Longitude]).addTo(map);
+        const popupHtml = `
+            <div class="map-popup">
+                <div class="map-popup-header">
+                    <img src="${p.PhotoPath !== "" ? p.PhotoPath : "/uploads/default-animal.png"}" alt="Zdjęcie zwierzaka"/>
+                    <div class="map-popup-info">
+                        <p class="map-popup-type"><i class="fa-solid fa-flag" style="color: #78c841;"></i> <span>${p.Type}</span></p>
+                        <p class="map-popup-species" style="margin: .5rem 0;">Zaginiony/na ${p.Species}</p>
+                        <div>
+                            <p class="map-popup-status status-lost"><span></span>${p.Status}</p>
+                            <a class="map-popup-page"> <i class="fa-solid fa-angle-right fa-xl" style="color: #78c841;"></i> </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-popup-buttons">
+                    <a class="popup-chat-button"><i class="fa-solid fa-message" style="color: #ff9b2f;"></i> <span>Rozpocznij chat</span></a>
+                    <a class="popup-sight-button"><i class="fa-solid fa-circle-plus" style="color: #fff;"></i> <span>Dodaj doniesienie</span></a>
+                </div>
+            </div>`;
 
-        marker.bindTooltip(`
-      <strong>${p.Title}</strong><br>
-      ${p.Type} • ${p.Status}
-    `, {
-            direction: 'top',
-            offset: [0, -10],
-            opacity: 0.95
-        });
+        const marker = L.marker([p.Latitude, p.Longitude], {icon: reportMarkerIcon}).addTo(map).bindPopup(popupHtml);
 
         markers.push(marker);
     });

@@ -22,15 +22,15 @@ public class NavViewComponent : ViewComponent {
         var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
         List<(string, string)> navItems = new List<(string, string)>();
         
-        navItems.Add(("Mapa", "/"));
+        navItems.Add(("Mapa", "/map"));
         
         if (isAuthenticated) {
-            navItems.Add(("Dodaj zgłoszenie", "/"));
+            navItems.Add(("Dodaj zgłoszenie", "/report/create"));
             navItems.Add(("Dodaj doniesienie", "/"));
         }
 
         if (isAdmin) {
-            navItems.Add(("Panel administratora", "/"));
+            navItems.Add(("Panel administratora", "/admin/panel"));
         }
 
         var viewModel = new NavViewModel() {

@@ -1,3 +1,5 @@
+@model MapFilterViewModel
+
 @{
     ViewData["Title"] = "Mapa zgłoszeń";
 }
@@ -14,6 +16,7 @@
 
     <script>
         const initialPoints = @Html.Raw(ViewBag.MapPointsJson ?? "[]");
+        const cordsFromFilter = @Html.Raw(ViewBag.CordinatesJson ?? "null");
     </script>
     
     <script src="~/js/main-map.js" defer></script>
@@ -26,37 +29,50 @@
         <i class="fa-solid fa-chevron-down"></i>
     </button>
     <div class="map-filter">
-        <form>
+        <form asp-controller="Map" asp-action="Index" method="get">
             <div class="map-filter-box">
-                <label>Lokalizacja</label>
+                <label asp-for="Location">Lokalizacja</label>
                 <div class="map-input-box">
                     <span><i class="fa-solid fa-location-arrow"></i></span>
-                    <input type="text" placeholder="np. Kraków" />
+                    <input asp-for="Location" type="text" placeholder="np. Kraków" />
                 </div>
             </div>
 
             <div class="map-filter-box">
-                <label>Rodzaj wpisu</label>
+                <p class="as-label">Rodzaj wpisu</p>
                 <div class="segmented">
                     <div class="segmented-box">
                         <input
-                            id="reports"
+                            asp-for="Type"
+                            id="all"
                             type="radio"
-                            name="segmented"
-                            value="reports"
-                            checked
+                            name="Type"
+                            value=""
+                            checked="@(Model?.Type == "")"
                         />
-                        <label for="reports">Zgłoszenia</label>
+                        <label for="all">Wszystkie</label>
+                    </div>
+                    
+                    <div class="segmented-box">
+                        <input
+                            asp-for="Type"
+                            id="zgłoszenie"
+                            type="radio"
+                            name="Type"
+                            value="zgłoszenie"
+                            checked="@(Model?.Type == "zgłoszenie")"/>
+                        <label for="zgłoszenie">Zgłoszenia</label>
                     </div>
 
                     <div class="segmented-box">
                         <input
-                            id="sights"
+                            asp-for="Type"
+                            id="doniesienie"
                             type="radio"
-                            name="segmented"
-                            value="sights"
-                        />
-                        <label for="sights">Doniesienia</label>
+                            name="Type"
+                            value="doniesienie"
+                            checked="@(Model?.Type == "doniesienie")"/>
+                        <label for="doniesienie">Doniesienia</label>
                     </div>
                 </div>
             </div>
@@ -64,20 +80,20 @@
             <div class="map-filter-box-flex">
                 <div class="map-filter-box">
                     <label>Status</label>
-                    <select>
-                        <option>Wszystkie</option>
-                        <option>Zaginiony</option>
-                        <option>Odnaleziony</option>
+                    <select asp-for="Status">
+                        <option value="" selected="@(string.IsNullOrEmpty(Model?.Status))">Wszystkie</option>
+                        <option value="zaginiony" selected="@(Model?.Status == "zaginiony")">Zaginiony</option>
+                        <option value="odnaleziony" selected="@(Model?.Status == "odnaleziony")">Odnaleziony</option>
                     </select>
                 </div>
 
                 <div class="map-filter-box">
                     <label>Gatunek</label>
-                    <select>
-                        <option>Wszystkie</option>
-                        <option>Pies</option>
-                        <option>Kot</option>
-                        <option>Inne</option>
+                    <select asp-for="Species">
+                        <option value="" selected="@(string.IsNullOrEmpty(Model?.Species))">Wszystkie</option>
+                        <option value="pies" selected="@(Model?.Species == "pies")">Pies</option>
+                        <option value="kot" selected="@(Model?.Species == "kot")">Kot</option>
+                        <option value="inne" selected="@(Model?.Species == "inne")">Inne</option>
                     </select>
                 </div>
             </div>

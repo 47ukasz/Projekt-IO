@@ -83,15 +83,15 @@ public class LostReportService : ILostReportService {
             return false;
         }
         
-        reportToUpdate.Title = lostReportDto.Title;
-        reportToUpdate.Status = lostReportDto.Status;
+        reportToUpdate.Title = lostReportDto.Title.ToLower();
+        reportToUpdate.Status = lostReportDto.Status.ToLower();
         reportToUpdate.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
         reportToUpdate.LostAt = lostReportDto.LostAt ?? DateOnly.FromDateTime(DateTime.UtcNow);
         
-        reportToUpdate.Animal.Name = lostReportDto.Animal.Name;
-        reportToUpdate.Animal.Species = lostReportDto.Animal.Species;
-        reportToUpdate.Animal.Breed = lostReportDto.Animal.Breed;
-        reportToUpdate.Animal.Description = lostReportDto.Animal.Description;
+        reportToUpdate.Animal.Name = lostReportDto.Animal.Name.ToLower();
+        reportToUpdate.Animal.Species = lostReportDto.Animal.Species.ToLower();
+        reportToUpdate.Animal.Breed = lostReportDto.Animal.Breed.ToLower();
+        reportToUpdate.Animal.Description = lostReportDto.Animal.Description.ToLower();
         
         reportToUpdate.Location.Latitude = lostReportDto.Location.Latitude;
         reportToUpdate.Location.Longitude = lostReportDto.Location.Longitude;

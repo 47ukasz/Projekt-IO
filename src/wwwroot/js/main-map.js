@@ -12,9 +12,17 @@ const MarkerIcon = L.Icon.extend({
 })
 
 const reportMarkerIcon = new MarkerIcon({iconUrl: "/img/report-marker.png"})
-const sightMarkerIcon = new MarkerIcon({iconUrl: "/img/sight-markers.png"})
+const sightMarkerIcon = new MarkerIcon({iconUrl: "/img/sight-marker.png"})
 
-const map = L.map('map').setView([52.23, 21.01], 12);
+let startingCordsLat = 52.23;
+let startingCordsLon = 21.01;
+
+if (cordsFromFilter) {
+    startingCordsLat = cordsFromFilter.lat;
+    startingCordsLon = cordsFromFilter.lon;
+}
+
+const map = L.map('map').setView([startingCordsLat, startingCordsLon], 12);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap'
@@ -50,12 +58,23 @@ function renderPoints(points) {
                     </div>
                 </div>
                 <div class="map-popup-buttons">
-                    <a class="popup-chat-button"><i class="fa-solid fa-message" style="color: #ff9b2f;"></i> <span>Rozpocznij chat</span></a>
-                    <a href="/sighting/create/${p.LostReportId}" class="popup-sight-button"><i class="fa-solid fa-circle-plus" style="color: #fff;"></i> <span>Dodaj doniesienie</span></a>
+                    <a class="popup-chat-button">
+                       <i class="fa-solid fa-message" style="color: #ff9b2f;"></i>
+                        <span>Rozpocznij chat</span>
+                    </a>
+
+                    ${
+                        p.Type === "zgłoszenie"
+                            ? `<a href="/sighting/create/${p.LostReportId}" class="popup-sight-button">
+                                    <i class="fa-solid fa-circle-plus" style="color: #fff;"></i>
+                                    <span>Dodaj doniesienie</span>
+                               </a>
+                            ` : ""
+                    }
                 </div>
             </div>`;
 
-        const marker = L.marker([p.Latitude, p.Longitude], {icon: reportMarkerIcon}).addTo(map).bindPopup(popupHtml);
+        const marker = L.marker([p.Latitude, p.Longitude], {icon: p.Type === "doniesienie" ? sightMarkerIcon : reportMarkerIcon}).addTo(map).bindPopup(popupHtml);
 
         markers.push(marker);
     });

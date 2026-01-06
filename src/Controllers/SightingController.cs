@@ -49,7 +49,7 @@ public class SightingController : Controller{
 
         var sightingDto = new SightingDto() {
             LostReportId = viewModel.LostReportId,
-            Description = viewModel.Description,
+            Description = viewModel.Description.ToLower(),
             Location = locationDto,
             SeenDate = viewModel.SeenDate,
             SeenTime = viewModel.SeenTime,
@@ -79,7 +79,7 @@ public class SightingController : Controller{
             IsEdit = true,
             Id = sighting.Id,
             LostReportId = sighting.LostReport.Id,
-            Description = sighting.Description,
+            Description = sighting.Description.ToLower(),
             SeenDate = sighting.SeenDate,
             Lat = sighting.Location.Latitude.ToString(CultureInfo.InvariantCulture),
             Lng = sighting.Location.Longitude.ToString(CultureInfo.InvariantCulture)
@@ -106,7 +106,7 @@ public class SightingController : Controller{
         var sightingDto = new SightingDto() {
             Id = viewModel.Id,
             LostReportId = viewModel.LostReportId,
-            Description = viewModel.Description,
+            Description = viewModel.Description.ToLower(),
             Location = locationDto,
             SeenDate = viewModel.SeenDate,
         };

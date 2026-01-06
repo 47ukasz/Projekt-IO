@@ -36,10 +36,10 @@ public class LostReportController : Controller {
         }
 
         var animalDto = new AnimalDto() {
-            Name = model.Name,
-            Species = model.Species,
-            Breed = model.Breed,
-            Description = model.Description,
+            Name = model.Name.ToLower(),
+            Species = model.Species.ToLower(),
+            Breed = model.Breed.ToLower(),
+            Description = model.Description.ToLower(),
         };
 
         var locationDto = new LocationDto() {
@@ -53,8 +53,8 @@ public class LostReportController : Controller {
             CreatedAt = DateOnly.FromDateTime(DateTime.Today),
             UpdatedAt = DateOnly.FromDateTime(DateTime.MaxValue),
             LostAt = model.MissingDate,
-            Status = "Zaginiony",
-            Title = model.Title,
+            Status = "zaginiony",
+            Title = model.Title.ToLower(),
         };
 
         var userId = _userManager.GetUserId(User);
@@ -81,11 +81,11 @@ public class LostReportController : Controller {
         var viewModel = new LostReportFormViewModel() {
             IsEdit = true,
             Id = report.Id,
-            Name = report.Animal.Name,
-            Species = report.Animal.Species,
-            Breed = report.Animal?.Breed ?? "",
-            Description = report.Animal.Description,
-            Title = report.Title,
+            Name = report.Animal.Name.ToLower(),
+            Species = report.Animal.Species.ToLower(),
+            Breed = report.Animal?.Breed.ToLower() ?? "",
+            Description = report.Animal.Description.ToLower(),
+            Title = report.Title.ToLower(),
             MissingDate = report.LostAt,
             Lat = report.Location.Latitude.ToString(CultureInfo.InvariantCulture),
             Lng = report.Location.Longitude.ToString(CultureInfo.InvariantCulture)
@@ -104,10 +104,10 @@ public class LostReportController : Controller {
         }
         
         var animalDto = new AnimalDto() {
-            Name = viewModel.Name,
-            Species = viewModel.Species,
-            Breed = viewModel.Breed,
-            Description = viewModel.Description,
+            Name = viewModel.Name.ToLower(),
+            Species = viewModel.Species.ToLower(),
+            Breed = viewModel.Breed.ToLower(),
+            Description = viewModel.Description.ToLower(),
         };
 
         var locationDto = new LocationDto() {
@@ -120,8 +120,8 @@ public class LostReportController : Controller {
             Animal = animalDto,
             Location = locationDto,
             LostAt = viewModel.MissingDate,
-            Status = "Zaginiony",
-            Title = viewModel.Title,
+            Status = "zaginiony",
+            Title = viewModel.Title.ToLower(),
         };
         
         var userId = _userManager.GetUserId(User);

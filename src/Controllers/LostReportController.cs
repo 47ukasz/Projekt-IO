@@ -28,7 +28,46 @@ public class LostReportController : Controller {
         
         return View("Form", viewModel);
     }
+    
+    [HttpPost("create")]
+    public async Task<IActionResult> Create(LostReportFormViewModel model) {
+        if (!ModelState.IsValid) {
+            return View("Form", model);
+        }
 
+        var animalDto = new AnimalDto() {
+            Name = model.Name,
+            Species = model.Species,
+            Breed = model.Breed,
+            Description = model.Description,
+        };
+
+        var locationDto = new LocationDto() {
+            Latitude = float.Parse(model.Lat, CultureInfo.InvariantCulture),
+            Longitude = float.Parse(model.Lng, CultureInfo.InvariantCulture) 
+        };
+
+        var lostReportDto = new LostReportDto() {
+            Animal = animalDto,
+            Location = locationDto,
+            CreatedAt = DateOnly.FromDateTime(DateTime.Today),
+            UpdatedAt = DateOnly.FromDateTime(DateTime.MaxValue),
+            LostAt = model.MissingDate,
+            Status = "Zaginiony",
+            Title = model.Title,
+        };
+
+        var userId = _userManager.GetUserId(User);
+        var result = await _lostReportService.CreateAsync(userId, lostReportDto, model.Photo);
+
+        if (!result) {
+            ModelState.AddModelError(string.Empty, "Nie można dodać zgłoszenia o zaginięciu.");
+            return View("Form", model);
+        }
+        
+        return RedirectToAction("Index", "Map");
+    }
+    
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(string id) {
         var userId = _userManager.GetUserId(User);
@@ -51,8 +90,6 @@ public class LostReportController : Controller {
             Lat = report.Location.Latitude.ToString(CultureInfo.InvariantCulture),
             Lng = report.Location.Longitude.ToString(CultureInfo.InvariantCulture)
         };
-        
-        Console.WriteLine($"Lat: {viewModel.Lat}, Lng: {viewModel.Lng}");
         
         return View("Form", viewModel);
     }
@@ -97,44 +134,5 @@ public class LostReportController : Controller {
         }
         
         return RedirectToAction("Index", "Profile");
-    }
-    
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(LostReportFormViewModel model) {
-        if (!ModelState.IsValid) {
-            return View("Form", model);
-        }
-
-        var animalDto = new AnimalDto() {
-            Name = model.Name,
-            Species = model.Species,
-            Breed = model.Breed,
-            Description = model.Description,
-        };
-
-        var locationDto = new LocationDto() {
-            Latitude = float.Parse(model.Lat, CultureInfo.InvariantCulture),
-            Longitude = float.Parse(model.Lng, CultureInfo.InvariantCulture) 
-        };
-
-        var lostReportDto = new LostReportDto() {
-            Animal = animalDto,
-            Location = locationDto,
-            CreatedAt = DateOnly.FromDateTime(DateTime.Today),
-            UpdatedAt = DateOnly.FromDateTime(DateTime.MaxValue),
-            LostAt = model.MissingDate,
-            Status = "lost",
-            Title = model.Title,
-        };
-
-        var userId = _userManager.GetUserId(User);
-        var result = await _lostReportService.CreateAsync(userId, lostReportDto, model.Photo);
-
-        if (!result) {
-            ModelState.AddModelError(string.Empty, "Nie można dodać zgłoszenia o zaginięciu.");
-            return View("Form", model);
-        }
-        
-        return RedirectToAction("Index", "Map");
     }
 }

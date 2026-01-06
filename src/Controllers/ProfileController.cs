@@ -12,23 +12,27 @@ public class ProfileController : Controller {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILostReportService _lostReportService;
     private readonly IUserService _userService;
+    private readonly ISightingService _sightingService;
     
-    public ProfileController(ILogger<ProfileController> logger, UserManager<ApplicationUser> userManager, ILostReportService lostReportService, IUserService userService) {
+    public ProfileController(ILogger<ProfileController> logger, UserManager<ApplicationUser> userManager, ILostReportService lostReportService, IUserService userService, ISightingService sightingService) {
         _logger = logger;
         _userManager = userManager;
         _lostReportService = lostReportService;
         _userService = userService;
+        _sightingService = sightingService;
     }
 
     [HttpGet("")]
     public async Task<IActionResult> Index(string tab = "reports") {
         var userId = _userManager.GetUserId(User);
         var userReports = await _lostReportService.GetLostReportsByIdAsync(userId);
+        var userSightings = await _sightingService.GetSightingsByIdAsync(userId);
         var userDto = await _userService.GetUserById(userId);
         
         var viewModel = new ProfileViewModel() {
             CurrentTab = tab,
             Reports = userReports,
+            Sightings = userSightings,
             UserFullName = userDto.FirstName + " " + userDto.LastName,
             UserEmail = userDto.Email,
         };

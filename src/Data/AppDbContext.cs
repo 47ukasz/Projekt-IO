@@ -20,5 +20,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>{
             entity.Property(e => e.Blocked).HasDefaultValue(false);
             entity.Property(e => e.LastName).HasDefaultValue("");
         });
+        
+        modelBuilder.Entity<Sighting>()
+            .Property(x => x.SeenDate)
+            .HasColumnType("timestamp without time zone");
     }
 }

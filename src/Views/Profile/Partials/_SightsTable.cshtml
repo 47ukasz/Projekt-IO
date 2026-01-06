@@ -1,3 +1,9 @@
+@model List<projekt_io.DTOs.SightingDto>
+
+@{
+    var counter = 1;
+}
+
 <section class="profile-section">
     <div class="table-wrapper">
         <div class="table-description">
@@ -11,51 +17,37 @@
                 <thead>
                 <tr class="table-row">
                     <th>ID</th>
-                    <th>TYP ZGŁOSZENIA</th>
-                    <th>Lokalizacja</th>
-                    <th>DATA</th>
+                    <th>ZAUWAŻONE ZWIERZE</th>
+                    <th>LOKALIZACJA</th>
+                    <th>DATA OBSERWACJI</th>
+                    <th>CZAS OBSERWACJI</th>
                     <th>AKCJE</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="table-row">
-                    <td>4821</td>
-                    <td>
-                        <div>
-                            <p class="table-type-header">Zaginiony Pies</p>
-                            <p class="table-type-muted">Rasa: Owczarek Niemiecki</p>
-                        </div>
-                    </td>
-                    <td>Warszawa</td>
-                    <td>12 Paź 2023</td>
-                    <td class="table-action-buttons">
-                        <button>
-                            <i class="fa-solid fa-pen fa-xl"></i>
-                        </button>
-                        <button>
-                            <i class="fa-solid fa-check fa-xl"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr class="table-row">
-                    <td>4821</td>
-                    <td>
-                        <div>
-                            <p class="table-type-header">Zaginiony Pies</p>
-                            <p class="table-type-muted">Rasa: Owczarek Niemiecki</p>
-                        </div>
-                    </td>
-                    <td>Warszawa</td>
-                    <td>12 Paź 2023</td>
-                    <td class="table-action-buttons">
-                        <button>
-                            <i class="fa-solid fa-pen fa-xl"></i>
-                        </button>
-                        <button>
-                            <i class="fa-solid fa-check fa-xl"></i>
-                        </button>
-                    </td>
-                </tr>
+                @foreach (var sighting in Model) {
+                    <tr class="table-row">
+                        <td>#@counter</td>
+                        <td>
+                            <div>
+                                <p class="table-type-header">@sighting.LostReport.Animal.Species</p>
+                                <p class="table-type-muted">Rasa: @(sighting.LostReport.Animal.Breed ?? "Nie podano")</p>
+                            </div>
+                        </td>
+                        <td>@(sighting.Location.City ?? "-")</td>
+                        <td>@sighting.SeenDate</td>
+                        <td>@sighting.SeenTime.ToString("HH:mm")</td>
+                        <td class="table-action-buttons">
+                            <a asp-controller="Sighting" asp-action="Edit" asp-route-id="@sighting.Id">
+                                <i class="fa-solid fa-pen fa-xl"></i>
+                            </a>
+                            <button>
+                                <i class="fa-solid fa-check fa-xl"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    counter += 1;
+                }
                 </tbody>
             </table>
         </div>

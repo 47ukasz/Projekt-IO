@@ -68,6 +68,7 @@ public class LostReportService : ILostReportService {
 
             return true;
         } catch (Exception ex) {
+            _logger.LogError($"Failed to save sighting: {ex.Message}");
             await dbTransaction.RollbackAsync();
             return false;
         }

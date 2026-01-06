@@ -14,11 +14,13 @@ public class SightingFormViewModel {
     [Required(ErrorMessage = "Podaj datę obserwacji.")]
     public DateOnly SeenDate { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
     
+    [Required(ErrorMessage = "Podaj czas obserwacji.")]
+    public TimeOnly SeenTime { get; set; } = TimeOnly.FromDateTime(DateTime.UtcNow);
+    
     [Required(ErrorMessage = "Wybierz lokalizację na mapie.")]
     public string? Lat { get; set; }
 
     public string? Lng { get; set; }
     
-    [Required(ErrorMessage = "Podaj zdjęcie zauwarzonego zwierzaka.")]
-    public IFormFile Photo { get; set; }
+    public IFormFile? Photo { get; set; }
 }

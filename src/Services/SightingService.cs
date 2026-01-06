@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.DTOs;
 using projekt_io.Entities;
@@ -19,25 +20,16 @@ public class SightingService : ISightingService{
     }
 
     public async Task<bool> CreateAsync(string userId, SightingDto sightingDto, IFormFile photo) {
-        Console.WriteLine("done 1");
-        
         if (string.IsNullOrWhiteSpace(userId)) {
             return false;
         }
-        
-        Console.WriteLine("done 2");
-
         if (sightingDto == null) {
             return false;
         }
 
-        Console.WriteLine("done 3");
-        
         if (sightingDto.Location == null) {
             return false;
         }
-        
-        Console.WriteLine("done 4");
         
         await using var dbTransaction = await _db.Database.BeginTransactionAsync();
 
@@ -47,7 +39,7 @@ public class SightingService : ISightingService{
             if (location == null) {
                 throw new Exception("Failed at saving...");
             }
-            
+
             var sightingEntity = SightingMapper.ToEntity(sightingDto);
             
             var photoPath = await SavePhotoAsync(photo);
@@ -56,6 +48,7 @@ public class SightingService : ISightingService{
             sightingEntity.LostReportId = sightingDto.LostReportId;
             sightingEntity.LocationId = location.Id;
             sightingEntity.PhotoPath = photoPath;
+            sightingEntity.SeenDate = sightingDto.SeenDate.ToDateTime(sightingDto.SeenTime);
 
             sightingEntity.Location = location;
             
@@ -66,20 +59,94 @@ public class SightingService : ISightingService{
             if (count <= 0) {
                 throw new Exception("Failed at saving...");
             }
+            Console.WriteLine("Done3");
             
             await dbTransaction.CommitAsync();
 
             return true;
         } catch (Exception ex) {
             _logger.LogError($"Failed to save sighting: {ex.Message}");
-            _logger.LogError(ex,
-                "CreateAsync failed. userId={UserId}, lostReportId={LostReportId}, lat={Lat}, lng={Lng}, seenDate={SeenDate}",
-                userId, sightingDto?.LostReportId, sightingDto?.Location?.Latitude, sightingDto?.Location?.Longitude, sightingDto?.SeenDate);
             await dbTransaction.RollbackAsync();
             return false;
         }
     }
+
+    public async Task<List<SightingDto>> GetAllSightingsAsync() {
+        var sightings = await _db.Sightings.AsNoTracking().Include(s => s.Location).Include(s => s.LostReport).ThenInclude(r => r.Animal).ToListAsync();
+        
+        var sightingsDto = sightings.Select(s => {
+            var dto = SightingMapper.ToDto(s);
+            dto.SeenTime = TimeOnly.FromDateTime(s.SeenDate);
+            return dto;
+        }).ToList();
+        
+        return sightingsDto;
+    }
+
+    public async Task<List<SightingDto>> GetSightingsByIdAsync(string ownerId) {
+        if (string.IsNullOrWhiteSpace(ownerId)) {
+            return null;
+        }
+        
+        var sightings = await _db.Sightings.AsNoTracking().Include(s => s.Location).Include(s => s.LostReport).ThenInclude(r => r.Animal).Where(s => s.UserId == ownerId).ToListAsync();
+        var sightingsDto = sightings.Select(s => {
+            var dto = SightingMapper.ToDto(s);
+            dto.SeenTime = TimeOnly.FromDateTime(s.SeenDate);
+            return dto;
+        }).ToList();
+        
+        return sightingsDto;
+    }
+
+    public async Task<SightingDto> GetSightingByIdAsync(string userId, string sightingId) {
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(sightingId)) {
+            return null;
+        }
+        
+        var sighting = await _db.Sightings.Include(s =>s.Location).Include(s => s.LostReport).FirstOrDefaultAsync(s => s.UserId == userId && s.Id == sightingId);
+
+        if (sighting == null) {
+            return null;
+        }
+        
+        var sightingDto = SightingMapper.ToDto(sighting);
+        sightingDto.SeenTime = TimeOnly.FromDateTime(sighting.SeenDate);
+        
+        return sightingDto;
+    }
+
+    public async Task<bool> UpdateAsync(string userId, SightingDto sightingDto, IFormFile photo) {
+        var sightingId = sightingDto.Id;
+        
+        var sightingToUpdate = await _db.Sightings.Include(s => s.Location).FirstOrDefaultAsync(s => s.UserId == userId && s.Id == sightingId);
+
+        if (sightingToUpdate == null) {
+            return false;
+        }
+        
+        sightingToUpdate.Description = sightingDto.Description;
+        sightingToUpdate.SeenDate = sightingDto.SeenDate.ToDateTime(sightingDto.SeenTime);
+        
+        sightingToUpdate.Location.Latitude = sightingDto.Location.Latitude;
+        sightingToUpdate.Location.Longitude = sightingDto.Location.Longitude;
+        sightingToUpdate.Location.City = await _geocodingService.GetCityAsync(sightingDto.Location.Latitude, sightingDto.Location.Longitude);
+
+        if (photo != null && photo.Length > 0) {
+            var photoPath = await SavePhotoAsync(photo);
+            
+            sightingToUpdate.PhotoPath = photoPath;
+        }
+        
+        var count = await _db.SaveChangesAsync();
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
     
+
     private async Task<Location?> CreateLocationAsync(LocationDto locationDto) {
         var location = LocationMapper.ToEntity(locationDto);
         var city = await _geocodingService.GetCityAsync(location.Latitude, location.Longitude);

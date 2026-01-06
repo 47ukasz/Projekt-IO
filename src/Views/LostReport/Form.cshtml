@@ -6,77 +6,97 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/main.css" />
-    <link rel="stylesheet" href="~/css/form.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/css/form.css" />
 }
 
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="~/js/form-map.js" defer></script>
+    <script src="~/js/form.js" defer></script>
 }
 
-<h1 class="header">@(Model.IsEdit ? "Edytuj zgłoszenie" : "Dodaj zgłoszenie")</h1>
+<div class="form-header-wrapper">
+    <div class="form-header">
+        <h1>@(Model.IsEdit ? "Edytuj zgłoszenie" : "Dodaj zgłoszenie")</h1>
+        <a><i class="fa-solid fa-arrow-left-long"></i> Wróć do mapy</a>
+    </div>
+    <p class="form-header-description">
+        Widziałeś błąkające się zwierzę? Uzupełnij poniższy formularz, aby pomóc w
+        jego identyfikacji.
+    </p>
+</div>
 
-<form asp-controller="LostReport" asp-action="@(Model.IsEdit ? "Edit" : "Create")" asp-route-id="@(Model.IsEdit ? Model.Id : null)" method="post" enctype="multipart/form-data">
+<form asp-controller="LostReport" asp-action="@(Model.IsEdit ? "Edit" : "Create")" asp-route-id="@(Model.IsEdit ? Model.Id : null)" method="post" enctype="multipart/form-data" class="form">
     @Html.AntiForgeryToken()
     
     <input type="hidden" asp-for="Id" />
+    <input asp-for="Lat" type="hidden" id="Lat"/>
+    <input asp-for="Lng" type="hidden" id="Lng"/>
     
-    <div class="container-box">
-        <div class="input-box">
-            <label asp-for="Name">Imię zwierzaka</label>
-            <input type="text" asp-for="Name" placeholder="Podaj imię zwierzaka">
+    <div class="form-flex-box form-map-box">
+        <div class="form-map-addons">
+            <p class="form-map-addon form-map-location">
+                <span class="form-map-location-circle"></span> Lokalizacja:
+                <span class="form-map-location-cord" id="cord-lat">50.2649 °N</span
+                >,<span class="form-map-location-cord" id="cord-lon"> 19.0238 °E</span>
+            </p>
+            <p class="form-map-addon">Kliknij na mapie, aby zaznaczyć pinezkę.</p>
         </div>
-
-        <div class="input-box">
-            <label asp-for="Species">Gatunek</label>
-            <input type="text" asp-for="Species" placeholder="Podaj gatunek zwierzaka">
-        </div>
-
-        <div class="input-box">
-            <label asp-for="Breed">Rasa (Opcjonalnie)</label>
-            <input type="text" asp-for="Breed" placeholder="Podaj rasę zwierzaka">
-        </div>
-
-        <div class="input-box">
-            <label asp-for="Description">Opis zwierzęcia</label>
-            <textarea asp-for="Description" placeholder="Podaj opis zwierzaka"></textarea>
-        </div>
+        <div id="map" class="form-map"></div>
     </div>
 
-    <div class="container-box">
-        <div class="input-box">
-            <label asp-for="Title">Tytuł zgłoszenia</label>
-            <input type="text" asp-for="Title" placeholder="Podaj tytuł zgłoszenia">
+    <div class="form-flex-box">
+        <div class="form-data">
+            <div class="form-input-box">
+                <label asp-for="Name" class="form-input-box-label"><i class="fa-solid fa-signature" style="color: #ff9b2f"></i>Imię zwierzaka</label>
+                <input type="text" asp-for="Name" placeholder="Podaj imię zwierzaka">
+            </div>
+            <div class="form-input-box">
+                <label asp-for="Species" class="form-input-box-label"><i class="fa-solid fa-file" style="color: #ff9b2f"></i>Gatunek</label>
+                <input type="text" asp-for="Species" placeholder="Podaj gatunek zwierzaka">
+            </div>
+            <div class="form-input-box">
+                <label asp-for="Breed" class="form-input-box-label"><i class="fa-solid fa-file" style="color: #ff9b2f"></i>Rasa (Opcjonalnie)</label>
+                <input type="text" asp-for="Breed" placeholder="Podaj rasę zwierzaka">
+            </div>
+            <div class="form-input-box">
+                <label asp-for="Title" class="form-input-box-label"><i class="fa-solid fa-heading" style="color: #ff9b2f"></i>Tytuł zgłoszenia</label>
+                <input type="text" asp-for="Title" placeholder="Podaj tytuł zgłoszenia">
+            </div>
+            <div class="form-input-box">
+                <p class="form-input-box-label">
+                    <i class="fa-solid fa-camera" style="color: #ff9b2f"></i>Zdjęcie
+                </p>
+                <div class="form-file-input">
+                    <label asp-for="Photo" class="form-file-button">
+                        Wybierz plik
+                        <input asp-for="Photo" type="file" accept="image/png,image/jpeg,image/jpg" id="Photo"/>
+                    </label>
+                    <span class="form-file-name" id="file-name">Nie wybrano pliku</span>
+                </div>
+                <p class="form-input-types">*PNG, JPG, JPEG</p>
+            </div>
+            <div class="form-input-box">
+                <label asp-for="Description" class="form-input-box-label"><i class="fa-solid fa-file" style="color: #ff9b2f"></i> Opis
+                    zwierzaka</label>
+                <div class="textarea-wrapper">
+                    <textarea asp-for="Description" placeholder="Opisz wygląd, rasę, kolor sierści, znaki szczególne oraz zachowanie zwierzęcia..." maxlength="500"></textarea>
+                    <p class="textarea-counter">0/500</p>
+                </div>
+            </div>
+            <div class="form-date-time-box">
+                <div class="form-input-box">
+                    <label asp-for="MissingDate" class="form-input-box-label">Data zaginięcia</label>
+                    <input asp-for="MissingDate" type="date"/>
+                </div>
+            </div>
+            <div asp-validation-summary="All" class="form-validation"></div>
         </div>
-        
-        <div class="input-box">
-            <label asp-for="MissingDate">Data zaginięcia</label>
-            <input asp-for="MissingDate" type="date"/>
+        <div class="form-footer">
+            <button class="btn btn-primary" type="submit">
+                @(Model.IsEdit ? "Zapisz zmiany" : "Dodaj zgłoszenie")
+            </button>
         </div>
     </div>
-    
-    <div class="container-box">
-        <div class="input-box">
-            <label>Lokalizacja</label>
-            <input asp-for="Lat" type="hidden" id="Lat"/>
-            <input asp-for="Lng" type="hidden" id="Lng"/>
-
-            <div id="map" class="form-map"></div>
-            <p id="coordsInfo" class="form-map-info">Nie wybrano lokalizacji</p>
-        </div>
-    </div>
-    
-    <div class="container-box">
-        <div class="input-box">
-            <label asp-for="Photo">Zdjęcie</label>
-            <input asp-for="Photo" type="file" accept="image/png,image/jpeg,image/jpg" />
-        </div>
-    </div>
-
-    <div asp-validation-summary="All" class="form-validation"></div>
-    
-    <button type="submit" class="btn btn-primary">
-        @(Model.IsEdit ? "Zapisz zmiany" : "Dodaj zgłoszenie")
-    </button>
 </form>

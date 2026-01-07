@@ -169,7 +169,34 @@ public class SightingService : ISightingService{
         return false;
     }
     
+    public async Task<bool> DeleteAsync(string sightingId) {
+        if (string.IsNullOrWhiteSpace(sightingId)) {
+            return false;
+        }
+        
+        var sightingToDelete = await _db.Sightings.Include(s => s.Location).FirstOrDefaultAsync(s => s.Id == sightingId);
 
+        if (sightingToDelete == null) {
+            return false;
+        }
+        
+        var location = sightingToDelete.Location;
+        
+        _db.Sightings.Remove(sightingToDelete);
+
+        if (location != null) {
+            _db.Locations.Remove(location);
+        }
+        
+        var count = await _db.SaveChangesAsync();
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
+    
     private async Task<Location?> CreateLocationAsync(LocationDto locationDto) {
         var location = LocationMapper.ToEntity(locationDto);
         var city = await _geocodingService.GetCityAsync(location.Latitude, location.Longitude);

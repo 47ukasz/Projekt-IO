@@ -40,7 +40,6 @@ public class UserService : IUserService {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
         if (user == null) {
-            Console.WriteLine($"User {userId} not found");
             return false;
         }
 

@@ -201,19 +201,21 @@
 }
 
 .status-lost {
-    background-color: #ffedd5;
-    border: 1px solid #fed7aa;
-    color: #9a3412;
+    text-transform: capitalize;
+    color: #e76f6d;
+    background-color: #ffe0df;
+    border: 1px solid #e76f6d;
 }
 
 .status-lost span {
-    background-color: #fbbe6c;
+    background-color: #e76f6d;
 }
 
 .status-found {
+    text-transform: capitalize;
     color: #166535;
     background-color: #dcfce7;
-    border: 1px solid #bdf8d1;
+    border: 1px solid #166535;
 }
 
 .status-found span {

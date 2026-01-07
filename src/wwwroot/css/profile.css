@@ -107,6 +107,24 @@
     text-align: left;
 }
 
+.table-row td > span.status {
+    padding: .5rem 1rem;
+    text-transform: capitalize;
+    border-radius: 0.7rem;
+}
+
+.table-row td > span.status.good {
+    color: #166535;
+    background-color: #dcfce7;
+    border: 1px solid #166535;
+}
+
+.table-row td > span.status.bad {
+    color: #e76f6d;
+    background-color: #ffe0df;
+    border: 1px solid #e76f6d;
+}
+
 .table-type-header {
     font-weight: 500;
     font-size: 1.3rem;
@@ -117,7 +135,9 @@
     color: #a3a3a3;
 }
 
-.table-action-buttons button {
+.table-action-buttons a, .table-action-buttons button {
+    color: #000;
+    text-decoration: none;
     margin-right: 1rem;
     background: none;
     border: none;

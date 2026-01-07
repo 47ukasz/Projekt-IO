@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using projekt_io.Entities;
@@ -6,6 +7,7 @@ using projekt_io.Services;
 
 namespace projekt_io.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("admin")]
 public class AdminController : Controller {
     private readonly ILogger<AdminController> _logger;
@@ -18,42 +20,48 @@ public class AdminController : Controller {
         _userManager = userManager;
     }
 
-    [HttpGet("panel")]
-    public async Task<IActionResult> Index() {
-        var users = await _userService.GetAllUsersAsync();
-
-        var viewModel = new AdminPanelViewModel() {
-            Users = users
-        };
-        
-        return View(viewModel);
-    }
-
     [HttpPost("updateRoles")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateRoles([FromForm] string userId, [FromForm] List<string> roles) {
+    public async Task<IActionResult> UpdateRoles([FromForm] string id, [FromForm] List<string> roles) {
         var currentUser = await _userManager.GetUserAsync(User);
-        var result = await _userService.ChangeUserRoles(userId, currentUser.Id, roles);
+        var result = await _userService.ChangeUserRoles(id, currentUser.Id, roles);
 
         if (!result) {
             TempData["Error"] = "Nie udało się zmienić roli użytkownikowi.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Profile", new {tab = "users"});
         }
 
         TempData["Success"] = "Role użytkownika zostały zaktualizowane.";
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Profile", new {tab = "users"});
+
     }
 
     [HttpPost("block")]
-    public async Task<IActionResult> BlockUser([FromForm] string userId) {
-        var result = await _userService.BlockUserAsync(userId);
+    public async Task<IActionResult> BlockUser([FromForm] string id) {
+        var result = await _userService.BlockUserAsync(id);
 
         if (!result) {
             TempData["Error"] = "Nie udało się zablokować użytkownika.";
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Profile", new {tab = "users"});
+
         }
 
         TempData["Success"] = "Użytkownik został zablokowany.";
-        return RedirectToAction("Index");
+        return RedirectToAction("Index", "Profile", new {tab = "users"});
+
+    }
+
+    [HttpPost("unblock")]
+    public async Task<IActionResult> UnblockUser([FromForm] string id) {
+        var result = await _userService.UnblockUserAsync(id);
+        
+        if (!result) {
+            TempData["Error"] = "Nie udało się odblokować użytkownika.";
+            return RedirectToAction("Index", "Profile", new {tab = "users"});
+
+        }
+
+        TempData["Success"] = "Użytkownik został odblokowany.";
+        return RedirectToAction("Index", "Profile", new {tab = "users"});
     }
 }

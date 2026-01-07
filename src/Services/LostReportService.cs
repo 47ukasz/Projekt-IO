@@ -111,6 +111,24 @@ public class LostReportService : ILostReportService {
 
         return false;
     }
+    
+    public async Task<bool> ChangeStatusAsync(string reportId, string statusValue) {
+        var reportToUpdate = await _db.LostReports.FirstOrDefaultAsync(r => r.Id == reportId);
+
+        if (reportToUpdate == null) {
+            return false;
+        }
+
+        reportToUpdate.Status = statusValue;
+        
+        var count = await _db.SaveChangesAsync();
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
 
     public async Task<List<LostReportDto>> GetLostReportsByIdAsync(string ownerId) {
         if (string.IsNullOrWhiteSpace(ownerId)) {
@@ -165,6 +183,45 @@ public class LostReportService : ILostReportService {
         return null;
     }
 
+    public async Task<bool> DeleteAsync(string reportId) {
+        if (string.IsNullOrWhiteSpace(reportId)) {
+            return false;
+        }
+        
+        var reportToDelete = await _db.LostReports.Include(r => r.Animal).Include(r => r.Location).FirstOrDefaultAsync(r => r.Id == reportId);
+
+        if (reportToDelete == null) {
+            return false;
+        }
+        
+        var sightings = await _db.Sightings.Where(s => s.LostReportId == reportId).ToListAsync();
+
+        if (sightings.Count > 0) {
+            _db.Sightings.RemoveRange(sightings);
+        }
+        
+        var animal = reportToDelete.Animal;
+        var location = reportToDelete.Location;
+        
+        _db.LostReports.Remove(reportToDelete);
+
+        if (animal != null) {
+            _db.Animals.Remove(animal);
+        }
+
+        if (location != null) {
+            _db.Locations.Remove(location);
+        }
+        
+        var count = await _db.SaveChangesAsync();
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
+    
     private async Task<Location?> CreateLocationAsync(LocationDto locationDto) {
         var location = LocationMapper.ToEntity(locationDto);
         var city = await _geocodingService.GetCityAsync(location.Latitude, location.Longitude);

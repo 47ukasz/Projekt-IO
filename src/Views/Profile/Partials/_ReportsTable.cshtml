@@ -2,7 +2,27 @@
 
 @{
     var counter = 1;
+    var targetUserId = ViewData["TargetUserId"] as string;
+    var isAdminView = (bool?)ViewData["IsAdminView"] ?? false;
 }
+
+@await Component.InvokeAsync("ConfirmModal", new ConfirmModalViewModel() {
+    Id = "changeReportStatus",
+    Title = "Czy na pewno chcesz zmienić status zgłoszenia?",
+    Action= "ChangeStatus",
+    Controller = "LostReport",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync("ConfirmModal", new ConfirmModalViewModel() {
+    Id = "deleteReport",
+    Title = "Czy na pewno chcesz usunąć ogłoszenie?",
+    Action= "Delete",
+    Controller = "LostReport",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
 
 <section class="profile-section">
     <div class="table-wrapper">
@@ -17,9 +37,10 @@
                 <thead>
                 <tr class="table-row">
                     <th>ID</th>
-                    <th>TYP ZGŁOSZENIA</th>
-                    <th>Lokalizacja</th>
+                    <th>DANE</th>
+                    <th>LOKALIZACJA</th>
                     <th>DATA</th>
+                    <th>STATUS</th>
                     <th>AKCJE</th>
                 </tr>
                 </thead>
@@ -35,14 +56,30 @@
                         </td>
                         <td>@(report.Location.City ?? "-")</td>
                         <td>@report.LostAt</td>
-                        <td class="table-action-buttons">
-                            <a asp-controller="LostReport" asp-action="Edit" asp-route-id="@report.Id">
-                                <i class="fa-solid fa-pen fa-xl"></i>
-                            </a>
-                            <button>
-                                <i class="fa-solid fa-check fa-xl"></i>
-                            </button>
-                        </td>
+                        @if (@report.Status == "zaginiony") {
+                            <td><span class="status bad">@report.Status</span></td>
+                        }
+                        else {
+                            <td><span class="status good">@report.Status</span></td>
+                        }
+                        @if (!isAdminView) {
+                            <td class="table-action-buttons">
+                                <a asp-controller="LostReport" asp-action="Edit" asp-route-id="@report.Id" title="Edytuj zgłoszenie">
+                                    <i class="fa-solid fa-pen fa-xl"></i>
+                                </a>
+                                @if (@report.Status == "zaginiony") {
+                                    <button data-modal-open="changeReportStatus" data-value="@report.Id" title="Oznacz jako odnalezione">
+                                        <i class="fa-solid fa-check fa-xl"></i>
+                                    </button>
+                                }
+                            </td>
+                        } else {
+                            <td class="table-action-buttons">
+                                <button data-modal-open="deleteReport" data-value="@report.Id" data-user="@targetUserId" title="Usuń zgłoszenie">
+                                    <i class="fa-solid fa-trash fa-xl"></i>
+                                </button>
+                            </td>
+                        }
                     </tr>
                     counter += 1;
                 }
@@ -76,3 +113,22 @@
         </div>
     </div>
 </section>
+
+@if (TempData["success"] != null || TempData["error"] != null) {
+    <section class="notifications">
+
+        @if (TempData["success"] != null) {
+            <div class="notification notification-success">
+                <i class="fa-solid fa-circle-check fa-xl" style="color: #fff"></i>
+                <span>@TempData["success"]</span>
+            </div>
+        }
+
+        @if (TempData["error"] != null) {
+            <div class="notification notification-error">
+                <i class="fa-solid fa-circle-xmark fa-xl" style="color: #fff"></i>
+                <span>@TempData["error"]</span>
+            </div>
+        }
+    </section>
+}

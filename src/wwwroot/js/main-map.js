@@ -52,7 +52,7 @@ function renderPoints(points) {
                         <p class="map-popup-type"><i class="fa-solid fa-flag" style="color: #78c841;"></i> <span>${p.Type}</span></p>
                         <p class="map-popup-species" style="margin: .5rem 0;">Zaginiony/na ${p.Species}</p>
                         <div>
-                            <p class="map-popup-status status-lost"><span></span>${p.Status}</p>
+                            <p class="map-popup-status ${p.Status === "zaginiony" ? "status-lost" : "status-found"}"><span></span>${p.Status}</p>
                             <a href="/report/${p.LostReportId}" class="map-popup-page"> <i class="fa-solid fa-angle-right fa-xl" style="color: #78c841;"></i> </a>
                         </div>
                     </div>

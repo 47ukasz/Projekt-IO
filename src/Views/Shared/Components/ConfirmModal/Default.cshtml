@@ -4,7 +4,8 @@
     <div class="modal" id="@Model.Id">
         <p class="modal-title">@Model.Title</p>
         <form asp-controller="@Model.Controller" asp-action="@Model.Action" method="post" class="modal-form">
-            <input type="text" hidden class="modal-input" name="userId"/>
+            <input type="hidden" class="modal-input" name="id"/>
+            <input type="hidden" class="modal-user" name="userId" />
             <button class="btn btn-reset" type="button" data-modal-close="closeModal">@Model.CancelText</button>
             <button class="btn btn-primary" type="submit">@Model.ConfirmText</button>
         </form>

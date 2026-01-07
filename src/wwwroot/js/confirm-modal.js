@@ -8,10 +8,13 @@ modalOpenButtons.forEach(button => {
         
         const modal = document.getElementById(modalId);
         const modalInput = modal.querySelector(".modal-input");
+        const userInput = modal.querySelector('.modal-user');
+        
+        if (userInput) {
+            userInput.value = button.dataset.user;
+        }
         
         modalInput.value = value;
-        
-        console.log(modalInput.value)
         
         modal.closest(".background").classList.add("background-show");
     })

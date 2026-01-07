@@ -1,0 +1,156 @@
+@using projekt_io.Entities
+@model List<projekt_io.DTOs.UserDto>
+
+@{
+    var counter = 1;
+    var currentUserId = ViewData["CurrentUserId"] as string;
+}
+
+@await Component.InvokeAsync("ConfirmModal", new ConfirmModalViewModel() {
+    Id = "deleteUserModal",
+    Title = "Czy na pewno chcesz usunąć użytkownika?",
+    Action= "Delete",
+    Controller = "Admin",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync(name: "ConfirmModal", new ConfirmModalViewModel() {
+    Id = "blockUserModal",
+    Title = "Czy na pewno chcesz zablokować użytkownika?",
+    Action = "BlockUser",
+    Controller = "Admin",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync(name: "ConfirmModal", new ConfirmModalViewModel() {
+    Id = "unBlockUserModal",
+    Title = "Czy na pewno chcesz odblokować użytkownika?",
+    Action = "UnblockUser",
+    Controller = "Admin",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
+
+@await Component.InvokeAsync("RolesModal", new RolesModalViewModel() {
+    Id = "manageRolesModal",
+    Title = "Edytuj role użytkownika",
+    Action = "UpdateRoles",
+    Controller = "Admin"
+})
+
+<section class="profile-section">
+    <div class="table-wrapper">
+        <div class="table-description">
+            <p class="table-description-header">Moje Zgłoszenia</p>
+            <p class="table-description-info">
+                Zarządzaj i przeglądaj status swoich aktywnych zgłoszeń
+            </p>
+        </div>
+        <div class="overflow overflow-table">
+            <table class="table">
+                <thead>
+                <tr class="table-row">
+                    <th>ID</th>
+                    <th>NAZWA UŻYTKOWNIKA</th>
+                    <th>EMAIL</th>
+                    <th>STATUS KONTA</th>
+                    <th>ROLE</th>
+                    <th>AKCJE</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Model) {
+                    @if (user.Id == currentUserId) {
+                        continue;
+                    }
+                    
+                    <tr class="table-row">
+                        <td>#@counter</td>
+                        <td>@user.FirstName @user.LastName</td>
+                        <td>@user.Email</td>
+                        @if (user.Blocked) {
+                            <td><span class="status bad">Zablokowany</span></td>
+                        }
+                        else {
+                            <td><span class="status good">Aktywny</span></td>
+                        }
+                        <td>
+                            @foreach (var role in user.Roles) {
+                                <span>@role </span>
+                            }
+                        </td>
+                        <td class="table-action-buttons">
+                            <button data-modal-open="deleteUserModal" data-value="@user.Id" title="Usuń użytkownika">
+                                <i class="fa-solid fa-trash fa-xl"></i>
+                            </button>
+                            <a asp-controller="Profile" asp-action="UserProfile" asp-route-userId="@user.Id" title="Profil użytkownika">
+                                <i class="fa-solid fa-user fa-xl"></i>
+                            </a>
+                            @if (user.Blocked) {
+                                <button data-modal-open="unBlockUserModal" data-value="@user.Id" title="Odblokuj użytkownika">
+                                    <i class="fa-solid fa-unlock fa-xl"></i>
+                                </button>
+                            }
+                            else {
+                                <button data-modal-open="blockUserModal" data-value="@user.Id" title="Zablokuj użytkownika">
+                                    <i class="fa-solid fa-ban fa-xl"></i>
+                                </button>
+                            }
+                            <button data-role-modal-open="manageRolesModal" data-value="@user.Id" data-roles="@string.Join(",", user.Roles)" title="Edytuj rolę użytkownika">
+                                <i class="fa-solid fa-pen-to-square fa-xl"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    counter += 1;
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-pagination table-pagination-mobile">
+            <button>Poprzednie</button>
+            <button>Następne</button>
+        </div>
+        <div class="table-pagination table-pagination-desktop">
+            <p class="table-pagination-results">
+                Pokazuje <span>1</span> do <span>3</span> z
+                <span>12</span> wyników
+            </p>
+            <div>
+                <ul class="table-pagination-pages">
+                    <li>
+                        <button>
+                            <i class="fa-solid fa-angle-left fa-xl"></i>
+                        </button>
+                    </li>
+                    <li class="table-pagination-page-number">1</li>
+                    <li>
+                        <button>
+                            <i class="fa-solid fa-angle-right fa-xl"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (TempData["success"] != null || TempData["error"] != null) {
+    <section class="notifications">
+
+        @if (TempData["success"] != null) {
+            <div class="notification notification-success">
+                <i class="fa-solid fa-circle-check fa-xl" style="color: #fff"></i>
+                <span>@TempData["success"]</span>
+            </div>
+        }
+
+        @if (TempData["error"] != null) {
+            <div class="notification notification-error">
+                <i class="fa-solid fa-circle-xmark fa-xl" style="color: #fff"></i>
+                <span>@TempData["error"]</span>
+            </div>
+        }
+    </section>
+}

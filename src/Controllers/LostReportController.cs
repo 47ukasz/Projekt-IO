@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using projekt_io.DTOs;
@@ -31,11 +33,13 @@ public class LostReportController : Controller {
         }
 
         var sightings = await _sightingService.GetSightingsByLostReportIdAsync(id);
-
+        
         var viewModel = new LostReportPageViewModel() {
             LostReport = lostReport,
             SightingsComments = sightings
         };
+        
+        ViewBag.CordinatesJson = JsonSerializer.Serialize(new { lat = lostReport.Location.Latitude, lon = lostReport.Location.Longitude });
         
         return View(viewModel);
     }
@@ -152,5 +156,32 @@ public class LostReportController : Controller {
         }
         
         return RedirectToAction("Index", "Profile");
+    }
+    
+    [HttpPost("changeStatus")]
+    public async Task<IActionResult> ChangeStatus([FromForm] string id) {
+        var result = await _lostReportService.ChangeStatusAsync(id, "odnaleziony");
+        
+        if (!result) {
+            TempData["Error"] = "Nie udało się zmienić statusu zgłoszenia.";
+            return RedirectToAction("Index", "Profile");
+        }
+
+        TempData["Success"] = "Status zgłoszenia został zaktualizowany.";
+        return RedirectToAction("Index", "Profile");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("delete")]
+    public async Task<IActionResult> Delete(string id, string? userId) {
+        var result = await _lostReportService.DeleteAsync(id);
+
+        if (!result) {
+            TempData["Error"] = "Nie udało się usunąć zgłoszenia.";
+            return RedirectToAction("UserProfile", "Profile", new {userId, tab = "reports"});
+        }
+
+        TempData["Success"] = "Zgłoszenie zostało usunięte.";
+        return RedirectToAction("UserProfile", "Profile", new {userId, tab = "reports"});
     }
 }

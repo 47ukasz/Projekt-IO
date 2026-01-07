@@ -75,8 +75,6 @@
     position: absolute;
     top: 1rem;
     left: 2rem;
-    color: #e76f6d;
-    background-color: #ffe0df;
     font-size: 1.2rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -85,10 +83,27 @@
 
 .animal-image-wrapper p span {
     display: block;
-    background-color: #e76f6d;
     width: 0.7rem;
     height: 0.7rem;
     border-radius: 50%;
+}
+
+.animal-image-wrapper p.lost {
+    color: #e76f6d;
+    background-color: #ffe0df;
+}
+
+.animal-image-wrapper p.found {
+    color: #166535;
+    background-color: #dcfce7;
+}
+
+.animal-image-wrapper p.lost span {
+    background-color: #e76f6d;
+}
+
+.animal-image-wrapper p.found span {
+    background-color: #166535;
 }
 
 .animal-data {

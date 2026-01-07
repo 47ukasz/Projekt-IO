@@ -13,8 +13,13 @@
 }
 
 @section Scripts {
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script src="~/js/report-page.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  
+  <script>
+    const lostReportCords = @Html.Raw(ViewBag.CordinatesJson ?? "null");
+  </script>
+  
+  <script src="~/js/report-page.js" defer></script>
 }
 
 <div class="header">
@@ -36,7 +41,7 @@
     <div class="animal-box">
       <div class="animal-image-wrapper">
         <img src="@(string.IsNullOrEmpty(Model.LostReport.Animal.PhotoPath) ? "/uploads/default-animal.png" : Model.LostReport.Animal.PhotoPath)" alt="Zdjęcie zaginionego psa" />
-        <p><span></span> @Model.LostReport.Status</p>
+        <p class="@(Model.LostReport.Status == "zaginiony" ? "lost" : "found")"><span></span> @Model.LostReport.Status</p>
       </div>
       <div class="animal-data">
         <div class="animal-data-header">

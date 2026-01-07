@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using projekt_io.DTOs;
@@ -121,5 +122,19 @@ public class SightingController : Controller{
         }
         
         return RedirectToAction("Index", "Map");
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("delete")]
+    public async Task<IActionResult> Delete(string id, string? userId) {
+        var result = await _sightingService.DeleteAsync(id);
+
+        if (!result) {
+            TempData["Error"] = "Nie udało się usunąć doniesienia.";
+            return RedirectToAction("UserProfile", "Profile", new {userId, tab = "sights"});
+        }
+
+        TempData["Success"] = "Doniesienie zostało usunięte.";
+        return RedirectToAction("UserProfile", "Profile", new {userId, tab = "sights"});
     }
 }

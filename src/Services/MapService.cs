@@ -62,9 +62,15 @@ public class MapService : IMapService {
         if (!string.IsNullOrWhiteSpace(filter.Status)) {
             mapPoints = mapPoints.Where(p => p.Status.ToLower() == filter.Status.ToLower()).ToList();
         }
-
+        
+        Console.WriteLine(filter.Species);
+        
         if (!string.IsNullOrWhiteSpace(filter.Species)) {
-            mapPoints = mapPoints.Where(p => p.Species.ToLower().Contains(filter.Species.ToLower())).ToList();
+            if (filter.Species == "inne") {
+                mapPoints = mapPoints.Where(p => p.Species.ToLower() != "pies" && p.Species.ToLower() != "kot").ToList();       
+            }else {
+                mapPoints = mapPoints.Where(p => p.Species.ToLower().Contains(filter.Species.ToLower())).ToList();
+            }
         }
         
         return mapPoints;

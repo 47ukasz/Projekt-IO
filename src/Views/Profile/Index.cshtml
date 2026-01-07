@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Strona użytkownika";
     Layout = "_Layout";
+
+    var navAction = Model.IsAdminView ? "UserProfile" : "Index";
+    var navRouteUserId = Model.IsAdminView ? Model.TargetUserId : null;
 }
 
 @section Styles {
@@ -15,6 +18,7 @@
 
 @section Scripts {
     <script src="~/js/confirm-modal.js" defer></script>
+    <script src="~/js/roles-modal.js" defer></script>
 }
 
 <section class="profile-card profile-section">
@@ -25,66 +29,103 @@
         </div>
 
         <div class="profile-info">
-            <p class="profile-title">Mój Profil</p>
+            <p class="profile-title">@(Model.IsAdminView ? "Profil użytkownika" : "Mój Profil")</p>
 
             <p class="profile-name">@Model.UserFullName</p>
             <p class="profile-email">@Model.UserEmail</p>
+            @* Opcjonalnie: szybki powrót admina do własnego profilu *@
+            @if (Model.IsAdminView)
+            {
+                <a asp-controller="Profile" asp-action="Index" class="admin-back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Wróć do mojego profilu
+                </a>
+            }
         </div>
     </div>
 </section>
 <section class="profile-nav profile-section overflow">
     <ul>
         <li>
-            <a asp-controller="Profile" asp-action="Index" asp-route-tab="reports" class="@(Model.CurrentTab == "reports" ? "profile-nav-active" : "")">
+            <a asp-controller="Profile" asp-action="@navAction" asp-route-userId="@navRouteUserId" asp-route-tab="reports" class="@(Model.CurrentTab == "reports" ? "profile-nav-active" : "")">
                 <i class="fa-solid fa-clipboard-list"></i
                 ><span>Zgłoszenia</span>
             </a>
         </li>
         <li>
-            <a asp-controller="Profile" asp-action="Index" asp-route-tab="sights" class="@(Model.CurrentTab == "sights" ? "profile-nav-active" : "")">
+            <a asp-controller="Profile" asp-action="@navAction" asp-route-userId="@navRouteUserId" asp-route-tab="sights" class="@(Model.CurrentTab == "sights" ? "profile-nav-active" : "")">
                 <i class="fa-solid fa-clipboard-list"></i
                 ><span>Doniesienia</span>
             </a>
         </li>
-        <li>
-            <a asp-controller="Profile" asp-action="Index" asp-route-tab="messages" class="@(Model.CurrentTab == "messages" ? "profile-nav-active" : "")">
-                <i class="fa-solid fa-clipboard-list"></i
-                ><span>Wiadomości</span>
-            </a>
-        </li>
-        <li>
-            <a asp-controller="Profile" asp-action="Index" asp-route-tab="notifications" class="@(Model.CurrentTab == "notifications" ? "profile-nav-active" : "")">
-                <i class="fa-solid fa-clipboard-list"></i
-                ><span>Powiadomienia</span>
-            </a>
-        </li>
-        <li>
-            <a asp-controller="Profile" asp-action="Index" asp-route-tab="history" class="@(Model.CurrentTab == "history" ? "profile-nav-active" : "")">
-                <i class="fa-solid fa-clipboard-list"></i
-                ><span>Historia zgłoszeń</span>
-            </a>
-        </li>
+        @if (!Model.IsAdminView) {
+            <li>
+                <a asp-controller="Profile" asp-action="Index" asp-route-tab="messages" class="@(Model.CurrentTab == "messages" ? "profile-nav-active" : "")">
+                    <i class="fa-solid fa-clipboard-list"></i
+                    ><span>Wiadomości</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Profile" asp-action="Index" asp-route-tab="notifications" class="@(Model.CurrentTab == "notifications" ? "profile-nav-active" : "")">
+                    <i class="fa-solid fa-clipboard-list"></i
+                    ><span>Powiadomienia</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Profile" asp-action="Index" asp-route-tab="history" class="@(Model.CurrentTab == "history" ? "profile-nav-active" : "")">
+                    <i class="fa-solid fa-clipboard-list"></i
+                    ><span>Historia zgłoszeń</span>
+                </a>
+            </li>
+        }
+        @if (User.IsInRole("Admin") && !Model.IsAdminView)
+        {
+            <li>
+                <a asp-controller="Profile" asp-action="Index" asp-route-tab="users"
+                   class="@(Model.CurrentTab == "users" ? "profile-nav-active" : "")">
+                    <i class="fa-solid fa-users"></i><span>Użytkownicy</span>
+                </a>
+            </li>
+        }
     </ul>
 </section>
 
-@switch (Model.CurrentTab) {
+@{
+    ViewData["CurrentUserId"] = Model.CurrentUserId;
+    ViewData["TargetUserId"] = Model.TargetUserId;
+    ViewData["IsAdminView"] = Model.IsAdminView;
+}
+
+@switch (Model.CurrentTab)
+{
     case "messages":
-        <partial name="Partials/_MessagesTable" />
+        if (!Model.IsAdminView) {
+            <partial name="Partials/_MessagesTable" />
+        }
         break;
 
     case "notifications":
-        <partial name="Partials/_NotificationsTable" />
+        if (!Model.IsAdminView) {
+            <partial name="Partials/_NotificationsTable" />
+        }
         break;
 
     case "history":
-        <partial name="Partials/_HistoryTable" />
+        if (!Model.IsAdminView) {
+            <partial name="Partials/_HistoryTable" />
+        }
         break;
 
     case "sights":
         <partial name="Partials/_SightsTable" model="@Model.Sightings" />
         break;
 
+    case "users":
+        if (User.IsInRole("Admin") && !Model.IsAdminView) {
+            <partial name="Partials/_UsersTable" model="@Model.Users" />
+        }
+        break;
+
     default:
-        <partial name="Partials/_ReportsTable" model="@Model.Reports"/>
+        <partial name="Partials/_ReportsTable" model="@Model.Reports" />
         break;
 }

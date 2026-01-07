@@ -1,11 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using projekt_io.DTOs;
 using projekt_io.Entities;
 using projekt_io.Models;
 using projekt_io.Services;
 
 namespace projekt_io.Controllers;
 
+[Authorize]
 [Route("profile")]
 public class ProfileController : Controller {
     private readonly ILogger<ProfileController> _logger;
@@ -29,14 +32,57 @@ public class ProfileController : Controller {
         var userSightings = await _sightingService.GetSightingsByIdAsync(userId);
         var userDto = await _userService.GetUserById(userId);
         
+        var isAdmin = User.IsInRole("Admin");
+
+        if (tab == "users" && !isAdmin) {
+            return Forbid();
+        }
+        
         var viewModel = new ProfileViewModel() {
             CurrentTab = tab,
+            CurrentUserId = userId,
             Reports = userReports,
             Sightings = userSightings,
             UserFullName = userDto.FirstName + " " + userDto.LastName,
             UserEmail = userDto.Email,
         };
+
+        if (tab == "users" && isAdmin) {
+            viewModel.Users = await _userService.GetAllUsersAsync();
+        }
         
         return View(viewModel);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> UserProfile(string userId, string tab = "reports") {
+        var isAdmin = User.IsInRole("Admin");
+        
+        if (!isAdmin || string.IsNullOrEmpty(userId)) {
+            return Forbid();
+        }
+        
+        var userDto = await _userService.GetUserById(userId);
+
+        if (userDto == null) {
+            return NotFound();
+        }
+        
+        var userReports = await _lostReportService.GetLostReportsByIdAsync(userId);
+        var userSightings = await _sightingService.GetSightingsByIdAsync(userId);
+
+        var viewModel = new ProfileViewModel() {
+            CurrentTab = tab,
+            CurrentUserId = userId,
+            Reports = userReports,
+            Sightings = userSightings,
+            UserFullName = userDto.FirstName + " " + userDto.LastName,
+            UserEmail = userDto.Email,
+            IsAdminView = isAdmin,
+            TargetUserId = userId,
+        };
+
+        return View("Index", viewModel);
     }
 }

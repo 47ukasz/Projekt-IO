@@ -322,8 +322,8 @@ a.btn-outline {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 100;
 }
@@ -333,7 +333,7 @@ a.btn-outline {
 }
 
 .modal {
-    border-radius: 1rem;
+    border-radius: .7rem;
     padding: 1.5rem;
     width: 100%;
     background-color: white;

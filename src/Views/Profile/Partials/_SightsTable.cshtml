@@ -2,7 +2,18 @@
 
 @{
     var counter = 1;
+    var targetUserId = ViewData["TargetUserId"] as string;
+    var isAdminView = (bool?)ViewData["IsAdminView"] ?? false;
 }
+
+@await Component.InvokeAsync("ConfirmModal", new ConfirmModalViewModel() {
+    Id = "deleteSighting",
+    Title = "Czy na pewno chcesz usunąć doniesienie?",
+    Action= "Delete",
+    Controller = "Sighting",
+    ConfirmText = "Potwierdź",
+    CancelText = "Anuluj"
+})
 
 <section class="profile-section">
     <div class="table-wrapper">
@@ -37,14 +48,21 @@
                         <td>@(sighting.Location.City ?? "-")</td>
                         <td>@sighting.SeenDate</td>
                         <td>@sighting.SeenTime.ToString("HH:mm")</td>
-                        <td class="table-action-buttons">
-                            <a asp-controller="Sighting" asp-action="Edit" asp-route-id="@sighting.Id">
-                                <i class="fa-solid fa-pen fa-xl"></i>
-                            </a>
-                            <button>
-                                <i class="fa-solid fa-check fa-xl"></i>
-                            </button>
-                        </td>
+                        @if (!isAdminView) {
+                            <td class="table-action-buttons">
+                                <a asp-controller="Sighting" asp-action="Edit" asp-route-id="@sighting.Id" title="Edytuj doniesienie">
+                                    <i class="fa-solid fa-pen fa-xl"></i>
+                                </a>
+                            </td>
+                        }
+                        else {
+                            <td class="table-action-buttons">
+                                <button type="button" data-modal-open="deleteSighting" data-value="@sighting.Id" data-user="@targetUserId" title="Usuń doniesienie">
+                                    <i class="fa-solid fa-trash fa-xl"></i>
+                                </button>
+                            </td>
+                        }
+                        
                     </tr>
                     counter += 1;
                 }
@@ -78,3 +96,22 @@
         </div>
     </div>
 </section>
+
+@if (TempData["success"] != null || TempData["error"] != null) {
+    <section class="notifications">
+
+        @if (TempData["success"] != null) {
+            <div class="notification notification-success">
+                <i class="fa-solid fa-circle-check fa-xl" style="color: #fff"></i>
+                <span>@TempData["success"]</span>
+            </div>
+        }
+
+        @if (TempData["error"] != null) {
+            <div class="notification notification-error">
+                <i class="fa-solid fa-circle-xmark fa-xl" style="color: #fff"></i>
+                <span>@TempData["error"]</span>
+            </div>
+        }
+    </section>
+}

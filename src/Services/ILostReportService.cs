@@ -8,5 +8,5 @@ public interface ILostReportService {
     public Task<bool> UpdateAsync(string ownerId, LostReportDto lostReportDto, IFormFile photo);
     public Task<List<LostReportDto>> GetLostReportsByIdAsync(string ownerId);
     public Task<List<LostReportDto>> GetAllLostReportsAsync();
-    public Task<LostReportDto> GetLostReportByIdAsync(string ownerId, string reportId);
+    public Task<LostReportDto> GetLostReportByIdAsync(string reportId);
 }

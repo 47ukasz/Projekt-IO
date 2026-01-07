@@ -13,11 +13,31 @@ public class LostReportController : Controller {
     private readonly ILogger<LostReportController> _logger;
     private readonly ILostReportService _lostReportService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ISightingService _sightingService;
 
-    public LostReportController(ILogger<LostReportController> logger, ILostReportService lostReportService, UserManager<ApplicationUser> userManager) {
+    public LostReportController(ILogger<LostReportController> logger, ILostReportService lostReportService, UserManager<ApplicationUser> userManager, ISightingService sightingService) {
         _logger = logger;
         _lostReportService = lostReportService;
         _userManager = userManager;
+        _sightingService = sightingService;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Index(string id) {
+        var lostReport = await _lostReportService.GetLostReportByIdAsync(id);
+
+        if (lostReport == null) {
+            return NotFound();
+        }
+
+        var sightings = await _sightingService.GetSightingsByLostReportIdAsync(id);
+
+        var viewModel = new LostReportPageViewModel() {
+            LostReport = lostReport,
+            SightingsComments = sightings
+        };
+        
+        return View(viewModel);
     }
     
     [HttpGet("create")]
@@ -70,9 +90,7 @@ public class LostReportController : Controller {
     
     [HttpGet("edit/{id}")]
     public async Task<IActionResult> Edit(string id) {
-        var userId = _userManager.GetUserId(User);
-        
-        var report = await _lostReportService.GetLostReportByIdAsync(userId, id);
+        var report = await _lostReportService.GetLostReportByIdAsync(id);
 
         if (report == null) {
             return NotFound();

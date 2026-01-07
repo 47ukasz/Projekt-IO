@@ -130,12 +130,12 @@ public class LostReportService : ILostReportService {
         return reportDtos;
     }
 
-    public async Task<LostReportDto> GetLostReportByIdAsync(string ownerId, string reportId) {
-        if (string.IsNullOrWhiteSpace(ownerId) || string.IsNullOrWhiteSpace(reportId)) {
+    public async Task<LostReportDto> GetLostReportByIdAsync(string reportId) {
+        if (string.IsNullOrWhiteSpace(reportId)) {
             return null;
         }
         
-        var report = await _db.LostReports.Include(r => r.Animal).Include(r => r.Location).FirstOrDefaultAsync(report => report.UserId == ownerId && report.Id == reportId);
+        var report = await _db.LostReports.Include(r => r.Animal).Include(r => r.Location).FirstOrDefaultAsync(report => report.Id == reportId);
 
         if (report == null) {
             return null;

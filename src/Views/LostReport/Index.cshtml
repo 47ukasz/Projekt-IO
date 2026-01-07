@@ -1,0 +1,159 @@
+@model LostReportPageViewModel
+
+@{
+    ViewData["Title"] = "Strona zgłoszenia";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/main.css" />
+    <link rel="stylesheet" href="~/css/home.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/css/profile.css">
+    <link rel="stylesheet" href="~/css/report-page.css">
+}
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="~/js/report-page.js" defer></script>
+}
+
+<div class="header">
+  <p class="header-app-location">
+    <span><i class="fa-solid fa-house" style="color: #757575"></i></span>
+    <a href="">Strona główna</a>
+    >
+    <a href="">Mapa</a>
+    >
+    <a href="" class="current">Maks</a>
+  </p>
+  <div class="header-back">
+    <i class="fa-solid fa-arrow-left-long" style="color: #757575"></i>
+    <a> Wróć do mapy</a>
+  </div>
+</div>
+<div class="report-content-box">
+  <div class="box">
+    <div class="animal-box">
+      <div class="animal-image-wrapper">
+        <img src="@(string.IsNullOrEmpty(Model.LostReport.Animal.PhotoPath) ? "/uploads/default-animal.png" : Model.LostReport.Animal.PhotoPath)" alt="Zdjęcie zaginionego psa" />
+        <p><span></span> @Model.LostReport.Status</p>
+      </div>
+      <div class="animal-data">
+        <div class="animal-data-header">
+          <div>
+            <p class="animal-data-name">@Model.LostReport.Animal.Name</p>
+            <p class="animal-data-location">
+              <i class="fa-solid fa-location-dot" style="color: #ff9b2f"></i>
+              Lokalizacja: @Model.LostReport.Location.City
+            </p>
+          </div>
+          <p class="icon icon-animal">
+            <i class="fa-solid fa-shield-dog fa-2xl"></i>
+          </p>
+        </div>
+        <div class="animal-data-main">
+          <div>
+            <p class="animal-data-label">Gatunek</p>
+            <p class="animal-data-value">@(Model.LostReport.Animal.Species ?? "-")</p>
+          </div>
+          <div>
+            <p class="animal-data-label">Rasa</p>
+            <p class="animal-data-value">@(Model.LostReport.Animal.Species ?? "-")</p>
+          </div>
+          <div>
+            <p class="animal-data-label">Data zaginięcia</p>
+            <p class="animal-data-value">@Model.LostReport.LostAt</p>
+          </div>
+        </div>
+      </div>
+      <div class="animal-buttons">
+        <a class="animal-button-chat">
+          <i class="fa-solid fa-message fa-sm"></i>
+          Rozpocznij chat
+        </a>
+        <a asp-controller="Sighting" asp-action="Create" asp-route-id="@Model.LostReport.Id" class="animal-button-sighting">
+          <i class="fa-solid fa-map-location-dot"></i>
+          Dodaj doniesienie
+        </a>
+      </div>
+    </div>
+    <div class="location-box">
+      <div id="map" class="location-map"></div>
+      <p>Ostatnia znana lokalizacja</p>
+    </div>
+  </div>
+  <div class="box">
+    <div class="description-box">
+      <div class="description-header">
+        <p class="icon icon-description">
+          <i class="fa-solid fa-file fa-xl"></i>
+        </p>
+        <p class="heading">Opis zwierzęcia</p>
+      </div>
+      <div class="description-content">
+        @Model.LostReport.Animal.Description
+      </div>
+    </div>
+    <div class="sighting-box">
+      <div class="sighting-header">
+        <p class="icon icon-sighting">
+          <i class="fa-solid fa-eye fa-xl"></i>
+        </p>
+        <p class="heading">Doniesienia</p>
+        <p class="sighting-counter">@Model.SightingsComments.Count</p>
+      </div>
+      @if (Model.SightingsComments.Count > 0) {
+        <div class="sighting-content">
+          @foreach (var s in Model.SightingsComments) 
+          {
+            <div class="sighting-content-row">
+              <div class="sighting-user">
+                <div class="sighting-user-avatar">
+                  <p>@((s.User.FirstName[0].ToString() + s.User.LastName[0]).ToUpper())</p>
+                </div>
+                <p class="sighting-user-name">@s.User.FirstName @s.User.LastName[0].ToString().ToUpper().</p>
+              </div>
+              <div class="sighting-description">
+                <p class="sighting-description-heading">Możliwa obserwacja</p>
+                <p class="sighting-description-text">
+                  @s.Sighting.Description
+                </p>
+                <p class="sighting-description-location">
+                  <i class="fa-solid fa-location-dot"></i> @s.Sighting.Location.City
+                </p>
+                <p class="sighting-description-datetime"> <i class="fa-solid fa-calendar"></i> @s.Sighting.SeenDate @s.Sighting.SeenTime.ToString("HH:mm")</p>
+              </div>
+            </div>
+          }
+          <div class="sighting-footer">
+            <div class="table-pagination table-pagination-mobile">
+              <button>Poprzednie</button>
+              <button>Następne</button>
+            </div>
+            <div class="table-pagination table-pagination-desktop">
+              <p class="table-pagination-results">
+                Pokazuje <span>1</span> do <span>3</span> z
+                <span>12</span> wyników
+              </p>
+              <div>
+                <ul class="table-pagination-pages">
+                  <li>
+                    <button>
+                      <i class="fa-solid fa-angle-left fa-xl"></i>
+                    </button>
+                  </li>
+                  <li class="table-pagination-page-number">1</li>
+                  <li>
+                    <button>
+                      <i class="fa-solid fa-angle-right fa-xl"></i>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

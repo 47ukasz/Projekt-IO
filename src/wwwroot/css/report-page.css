@@ -1,0 +1,361 @@
+:root {
+    --medium-gray: #757575;
+    --main-text: #212121;
+    --border: #e0e0e0;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: normal;
+    margin-bottom: 2rem;
+}
+
+.header-app-location {
+    color: var(--medium-gray);
+    font-size: 1.2rem;
+}
+
+.header-app-location a {
+    padding: 0.5rem;
+    text-decoration: none;
+    color: var(--medium-gray);
+}
+
+.header-app-location a.current {
+    font-weight: bold;
+}
+
+.header-app-location a:hover {
+    text-decoration: underline;
+}
+
+.header-back {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    gap: 1rem;
+}
+
+.header-back a {
+    color: var(--medium-gray);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.header-back a:hover {
+    text-decoration: underline;
+}
+
+.animal-box {
+    margin-bottom: 3rem;
+    border-radius: 0.7rem;
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid var(--light-gray);
+}
+
+.animal-image-wrapper {
+    position: relative;
+}
+
+.animal-image-wrapper img {
+    width: 100%;
+    height: auto;
+    max-height: 25rem;
+    object-fit: cover;
+}
+
+.animal-image-wrapper p {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: absolute;
+    top: 1rem;
+    left: 2rem;
+    color: #e76f6d;
+    background-color: #ffe0df;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 2rem;
+}
+
+.animal-image-wrapper p span {
+    display: block;
+    background-color: #e76f6d;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 50%;
+}
+
+.animal-data {
+    padding: 2rem;
+}
+
+.animal-data-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.animal-data-name {
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--main-text);
+}
+
+.animal-data-location {
+    color: var(--medium-gray);
+    font-size: 1.2rem;
+}
+
+.location-box {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    height: 30rem;
+    border-radius: 0.7rem;
+    overflow: hidden;
+}
+
+.location-box p {
+    padding: 1rem;
+    position: relative;
+    width: 100%;
+    background-color: #fff;
+    color: var(--medium-gray);
+    font-weight: 500;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.7rem;
+    text-align: center;
+    z-index: 3;
+    opacity: 0.9;
+}
+
+.location-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
+}
+
+.icon {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.7rem;
+}
+
+.icon-animal {
+    background-color: #e6f3dc;
+}
+
+.icon-animal i {
+    color: #6ec22d;
+}
+
+.icon-description {
+    background-color: #eaf2ff;
+    padding: 1.5rem;
+}
+
+.icon-description i {
+    color: #2d73e4;
+}
+
+.icon-sighting {
+    background-color: #fff3e4;
+}
+
+.icon-sighting i {
+    color: #ff6600;
+}
+
+.animal-data-main {
+    padding: 1.5rem 0;
+}
+
+.animal-data-main div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.animal-data-label {
+    font-size: 1.2rem;
+    color: var(--medium-gray);
+}
+
+.animal-data-value {
+    text-transform: capitalize;
+    font-size: 1.3rem;
+    color: var(--main-text);
+    font-weight: 500;
+}
+
+.animal-buttons {
+    padding: 0 2rem 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.animal-buttons a {
+    text-align: center;
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 0.7rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.animal-buttons a > i {
+    margin-right: 0.5rem;
+}
+
+.animal-button-chat {
+    background-color: var(--orange);
+    color: #fff;
+    font-weight: bold;
+    border: none;
+}
+
+.animal-button-sighting {
+    background-color: #fff;
+    border: 2px solid var(--green);
+    color: var(--green);
+    font-weight: bold;
+}
+
+.description-box {
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 0.7rem;
+}
+
+.description-header,
+.sighting-header {
+    display: flex;
+    align-items: center;
+}
+
+.description-header p.heading,
+.sighting-header p.heading {
+    font-size: 1.5rem;
+    margin: 0 1.2rem 0 1rem;
+    font-weight: 500;
+    color: var(--main-text);
+}
+
+.description-content {
+    text-transform: capitalize;
+    padding: 1rem 0;
+    font-size: 1.2rem;
+    color: var(--medium-gray);
+    line-height: 1.6;
+}
+
+.sighting-box {
+    border: 1px solid var(--light-gray);
+    border-radius: 0.7rem;
+}
+
+.sighting-header {
+    padding: 2.5rem 2rem;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.sighting-counter {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--light-gray);
+    border-radius: 4rem;
+}
+
+.sighting-content-row {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.sighting-user {
+    padding-right: 2.5rem;
+}
+
+.sighting-user-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
+    height: 4rem;
+    background-color: #eaf2ff;
+    border-radius: 50%;
+}
+
+.sighting-user-avatar p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2d73e4;
+}
+
+.sighting-user-name {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--main-text);
+    text-align: center;
+}
+
+.sighting-description-heading {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--main-text);
+}
+
+.sighting-description-text {
+    text-transform: capitalize;
+    margin: 1rem 0;
+    font-size: 1.1rem;
+    color: var(--medium-gray);
+}
+
+.sighting-description-location, .sighting-description-datetime {
+    color: var(--medium-gray);
+}
+
+.sighting-description-datetime {
+    margin-top: 1rem;
+}
+
+.sighting-description-location i, .sighting-description-datetime i {
+    margin-right: 0.5rem;
+    color: #ff6600;
+}
+
+@media (min-width: 992px) {
+    .report-content-box {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .animal-box {
+        width: 40rem;
+    }
+    
+    .sighting-description {
+        min-width: 30rem;
+    }
+}

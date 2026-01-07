@@ -3,6 +3,7 @@ using projekt_io.Data;
 using projekt_io.DTOs;
 using projekt_io.Entities;
 using projekt_io.Mappers;
+using projekt_io.Models;
 
 namespace projekt_io.Services;
 
@@ -113,6 +114,28 @@ public class SightingService : ISightingService{
         sightingDto.SeenTime = TimeOnly.FromDateTime(sighting.SeenDate);
         
         return sightingDto;
+    }
+
+    public async Task<List<SightingsCommentViewModel>> GetSightingsByLostReportIdAsync(string lostReportId) {
+        if (string.IsNullOrWhiteSpace(lostReportId)) {
+            return null;
+        }
+        
+        var sightings = await _db.Sightings.AsNoTracking().Include(s => s.Location).Include(s => s.User).Where(s => s.LostReportId == lostReportId).ToListAsync();
+        
+        var sightingsDto = sightings.Select(s => {
+            var dto = SightingMapper.ToDto(s);
+            dto.SeenTime = TimeOnly.FromDateTime(s.SeenDate);
+
+            var model = new SightingsCommentViewModel() {
+                Sighting = dto,
+                User = UserMapper.ToDto(s.User),
+            };
+            
+            return model;
+        }).ToList();
+        
+        return sightingsDto;
     }
 
     public async Task<bool> UpdateAsync(string userId, SightingDto sightingDto, IFormFile photo) {

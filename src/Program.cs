@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.Entities;
 using projekt_io.Services;
+//using projekt_io.Hubs;
+
 
 namespace projekt_io;
 
@@ -34,7 +36,10 @@ public class Program {
         builder.Services.AddScoped<IMapService, MapService>();
         builder.Services.AddScoped<ILostReportService, LostReportService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
-        
+
+        builder.Services.AddScoped<IChatService, ChatService>();
+        //builder.Services.AddSignalR();
+
         builder.Services.ConfigureApplicationCookie(options => {
             options.LoginPath = "/login";
             options.LogoutPath = "/logout";
@@ -61,6 +66,8 @@ public class Program {
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        //app.MapHub<ChatHub>("/hubs/chat");
 
         using (var scope = app.Services.CreateScope()) {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();

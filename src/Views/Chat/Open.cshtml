@@ -1,0 +1,27 @@
+﻿@model projekt_io.Models.ChatOpenViewModel
+
+@{
+    ViewData["Title"] = "Czat";
+    Layout = "_Layout";
+}
+
+<section class="profile-section">
+    <a asp-controller="Chat" asp-action="Index">- Wróć do listy czatów</a>
+
+    <h2>Czat: @Model.OtherUserDisplay</h2>
+
+    <div style="border:1px solid #ddd; padding: 12px; border-radius: 8px;">
+        @if (Model.Messages.Count == 0) {
+            <p>Brak wiadomości.</p>
+        } else {
+            @foreach (var m in Model.Messages) {
+                <div style="margin: 8px 0; text-align:@(m.IsMine ? "right" : "left");">
+                    <div style="display:inline-block; padding:8px 10px; border-radius:10px; border:1px solid #ccc; max-width:70%;">
+                        <div>@m.Content</div>
+                        <small>@m.SentAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</section>

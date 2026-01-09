@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using projekt_io.Data;
@@ -11,9 +12,11 @@ using projekt_io.Data;
 namespace projekt_io.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260106235907_AddChatTables")]
+    partial class AddChatTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,9 +310,6 @@ namespace projekt_io.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .HasColumnType("text");
-
                     b.Property<float>("Latitude")
                         .HasColumnType("real");
 
@@ -367,48 +367,6 @@ namespace projekt_io.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("LostReports");
-                });
-
-            modelBuilder.Entity("projekt_io.Entities.Sighting", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LocationId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LostReportId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhotoPath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("SeenDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("LostReportId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Sightings");
                 });
 
             modelBuilder.Entity("projekt_io.Entities.Message", b =>
@@ -545,33 +503,6 @@ namespace projekt_io.Migrations
                     b.Navigation("Animal");
 
                     b.Navigation("Location");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("projekt_io.Entities.Sighting", b =>
-                {
-                    b.HasOne("projekt_io.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("projekt_io.Entities.LostReport", "LostReport")
-                        .WithMany()
-                        .HasForeignKey("LostReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("projekt_io.Entities.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("LostReport");
 
                     b.Navigation("User");
                 });

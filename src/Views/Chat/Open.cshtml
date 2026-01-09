@@ -1,0 +1,158 @@
+﻿@model projekt_io.Models.ChatOpenViewModel
+
+@{
+    ViewData["Title"] = "Czat";
+    Layout = "_Layout";
+}
+
+<section class="profile-section">
+    <a asp-controller="Chat" asp-action="Index">- Wróć do listy czatów</a>
+
+    <h2>Czat: @Model.OtherUserDisplay</h2>
+
+    <!-- WAŻNE: id="messagesBox" żeby JS wiedział gdzie dopisywać wiadomości -->
+    <div id="messagesBox" style="border:1px solid #ddd; padding: 12px; border-radius: 8px; max-height: 420px; overflow-y: auto;">
+        @if (Model.Messages.Count == 0)
+        {
+            <p>Brak wiadomości.</p>
+        }
+        else
+        {
+            @foreach (var m in Model.Messages)
+            {
+                <div style="margin: 8px 0; text-align:@(m.IsMine ? "right" : "left");">
+                    <div style="display:inline-block; padding:8px 10px; border-radius:10px; border:1px solid #ccc; max-width:70%;">
+                        <div>@m.Content</div>
+                        <small>@m.SentAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Pole do wpisania + przycisk wysyłania -->
+    <div style="margin-top:12px; display:flex; gap:8px;">
+        <input id="chatInput" type="text" class="form-control" placeholder="Napisz wiadomość..." style="flex:1;" />
+        <button id="sendBtn" type="button" class="btn btn-success">Wyślij</button>
+    </div>
+
+    <div id="chatError" style="margin-top:8px; color:#c00;"></div>
+
+    <!-- Hidden chatId dla JS -->
+    <input type="hidden" id="chatId" value="@Model.ChatId" />
+</section>
+
+@section Scripts {
+    <!-- CDN SignalR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+
+    <script>
+        (function () {
+            const chatId = document.getElementById("chatId").value;
+            const input = document.getElementById("chatInput");
+            const sendBtn = document.getElementById("sendBtn");
+            const box = document.getElementById("messagesBox");
+            const err = document.getElementById("chatError");
+
+            // id zalogowanego usera (wstawiane przez Razor)
+            const myId = "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value";
+
+            function escapeHtml(text) {
+                const div = document.createElement("div");
+                div.innerText = text ?? "";
+                return div.innerHTML;
+            }
+
+            function appendMessage(content, sentAt, isMine) {
+                const wrapper = document.createElement("div");
+                wrapper.style.margin = "8px 0";
+                wrapper.style.textAlign = isMine ? "right" : "left";
+
+                const bubble = document.createElement("div");
+                bubble.style.display = "inline-block";
+                bubble.style.padding = "8px 10px";
+                bubble.style.borderRadius = "10px";
+                bubble.style.border = "1px solid #ccc";
+                bubble.style.maxWidth = "70%";
+
+                const dt = new Date(sentAt);
+                const dateStr = isNaN(dt.getTime()) ? "" : dt.toLocaleString();
+
+                bubble.innerHTML = `
+                            <div>${escapeHtml(content)}</div>
+                            <small>${escapeHtml(dateStr)}</small>
+                        `;
+
+                wrapper.appendChild(bubble);
+                box.appendChild(wrapper);
+
+                // scroll na dół
+                box.scrollTop = box.scrollHeight;
+            }
+
+            // start od razu na dole listy
+            box.scrollTop = box.scrollHeight;
+
+            // połączenie z hubem
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/hubs/chat")
+                .withAutomaticReconnect()
+                .build();
+
+            // odbiór wiadomości (broadcast z serwera)
+            connection.on("ReceiveMessage", (msg) => {
+                if (!msg) return;
+                if (msg.chatId !== chatId) return;
+
+                const isMine = msg.senderId === myId;
+                appendMessage(msg.content, msg.sentAt, isMine);
+            });
+
+            async function start() {
+                try {
+                    await connection.start();
+                    await connection.invoke("JoinChat", chatId);
+                    err.textContent = "";
+                } catch (e) {
+                    err.textContent = "Błąd połączenia czatu.";
+                    console.error(e);
+                }
+            }
+
+            // wysyłanie
+            async function send() {
+                const text = (input.value || "").trim();
+                if (!text) return;
+
+                sendBtn.disabled = true;
+                err.textContent = "";
+
+                try {
+                    await connection.invoke("SendMessage", chatId, text);
+                    input.value = "";
+                    input.focus();
+                } catch (e) {
+                    err.textContent = "Nie udało się wysłać wiadomości.";
+                    console.error(e);
+                } finally {
+                    sendBtn.disabled = false;
+                }
+            }
+
+            sendBtn.addEventListener("click", send);
+
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    send();
+                }
+            });
+
+            window.addEventListener("beforeunload", () => {
+                connection.invoke("LeaveChat", chatId).catch(() => { });
+            });
+
+            start();
+        })();
+    </script>
+}

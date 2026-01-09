@@ -1,0 +1,43 @@
+﻿@model List<projekt_io.Models.ChatListItemViewModel>
+
+@{
+    ViewData["Title"] = "Wiadomości";
+    Layout = "_Layout";
+}
+
+<section class="profile-section">
+    <h2>Twoje czaty</h2>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <p>Brak czatów.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Z kim</th>
+                    <th>Ostatnia wiadomość</th>
+                    <th>Data</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.OtherUserDisplay</td>
+                        <td>@c.LastMessagePreview</td>
+                        <td>@(c.LastMessageAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                        <td>
+                            <a class="btn btn-sm btn-primary" asp-controller="Chat" asp-action="Open" asp-route-id="@c.ChatId">
+                                Otwórz
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

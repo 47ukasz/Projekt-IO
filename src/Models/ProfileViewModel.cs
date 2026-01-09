@@ -12,4 +12,5 @@ public class ProfileViewModel {
     public List<LostReportDto> Reports { get; set; }
     public List<SightingDto> Sightings { get; set; }
     public List<UserDto> Users { get; set; }
+    public List<ChatListItemViewModel> Chats { get; set; } = new();
 }

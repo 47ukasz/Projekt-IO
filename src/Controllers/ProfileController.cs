@@ -1,14 +1,13 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using projekt_io.DTOs;
 using projekt_io.Entities;
 using projekt_io.Models;
 using projekt_io.Services;
 
 namespace projekt_io.Controllers;
 
-[Authorize]
 [Route("profile")]
 public class ProfileController : Controller {
     private readonly ILogger<ProfileController> _logger;

@@ -4,6 +4,7 @@ using projekt_io.Data;
 using projekt_io.Entities;
 using projekt_io.Services;
 using projekt_io.Hubs;
+using QuestPDF.Infrastructure;
 
 
 namespace projekt_io;
@@ -11,6 +12,7 @@ namespace projekt_io;
 public class Program {
     public static async Task Main(string[] args) {
         var builder = WebApplication.CreateBuilder(args);
+        QuestPDF.Settings.License = LicenseType.Community;
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
@@ -40,7 +42,8 @@ public class Program {
         builder.Services.AddScoped<IChatService, ChatService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
         builder.Services.AddSignalR();
-            
+        builder.Services.AddScoped<IPosterPdfService, PosterPdfService>();
+
         builder.Services.AddHttpClient("Nominatim", client => {
             client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
             client.DefaultRequestHeaders.Add("User-Agent", "projekt-io/1.0 (kontakt@email.pl)");

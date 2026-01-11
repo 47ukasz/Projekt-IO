@@ -79,7 +79,11 @@
                                         <i class="fa-solid fa-check fa-xl"></i>
                                     </button>
                                 }
-                                <a title="Generuj plakat">
+                                <a asp-controller="LostReport"
+                                    asp-action="Poster"
+                                    asp-route-id="@report.Id"
+                                    target="_blank"
+                                    title="Generuj plakat">
                                     <i class="fa-regular fa-file-pdf fa-xl"></i>
                                 </a>
                             </td>

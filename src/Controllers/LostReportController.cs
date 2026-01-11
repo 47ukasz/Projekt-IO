@@ -7,6 +7,7 @@ using projekt_io.DTOs;
 using projekt_io.Entities;
 using projekt_io.Models;
 using projekt_io.Services;
+using QuestPDF.Infrastructure;
 
 namespace projekt_io.Controllers;
 
@@ -16,12 +17,14 @@ public class LostReportController : Controller {
     private readonly ILostReportService _lostReportService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ISightingService _sightingService;
+    private readonly IPosterPdfService _posterPdfService;
 
-    public LostReportController(ILogger<LostReportController> logger, ILostReportService lostReportService, UserManager<ApplicationUser> userManager, ISightingService sightingService) {
+    public LostReportController(ILogger<LostReportController> logger, ILostReportService lostReportService, UserManager<ApplicationUser> userManager, ISightingService sightingService, IPosterPdfService posterPdfService) {
         _logger = logger;
         _lostReportService = lostReportService;
         _userManager = userManager;
         _sightingService = sightingService;
+        _posterPdfService = posterPdfService;
     }
 
     [HttpGet("{id}")]
@@ -183,5 +186,35 @@ public class LostReportController : Controller {
 
         TempData["Success"] = "Zgłoszenie zostało usunięte.";
         return RedirectToAction("UserProfile", "Profile", new {userId, tab = "reports"});
+    }
+
+    [Authorize]
+    [HttpGet("poster/{id}")]
+    public async Task<IActionResult> Poster(string id)
+    {
+        var report = await _lostReportService.GetLostReportByIdAsync(id);
+        if (report == null)
+            return NotFound();
+
+        var currentUserId = _userManager.GetUserId(User);
+
+        // właściciel lub admin
+        if (report.UserId != currentUserId && !User.IsInRole("Admin"))
+            return Forbid();
+
+        var owner = await _userManager.FindByIdAsync(report.UserId);
+
+        try
+        {
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var pdfBytes = _posterPdfService.GenerateLostReportPoster(report, owner?.Email, baseUrl);
+
+            return File(pdfBytes, "application/pdf", $"plakat-{id}.pdf");
+        }
+        catch
+        {
+            TempData["Error"] = "Nie można wygenerować plakatu w formie PDF.";
+            return RedirectToAction("Index", "Profile");
+        }
     }
 }

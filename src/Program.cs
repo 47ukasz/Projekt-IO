@@ -37,11 +37,9 @@ public class Program {
         builder.Services.AddScoped<ISightingService, SightingService>();
         builder.Services.AddScoped<IMapService, MapService>();
         builder.Services.AddScoped<ILostReportService, LostReportService>();
-        builder.Services.AddTransient<IEmailService, EmailService>();
-
         builder.Services.AddScoped<IChatService, ChatService>();
+        builder.Services.AddTransient<IEmailService, EmailService>();
         builder.Services.AddSignalR();
-
             
         builder.Services.AddHttpClient("Nominatim", client => {
             client.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");

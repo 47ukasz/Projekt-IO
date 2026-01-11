@@ -1,7 +1,14 @@
-@model List<projekt_io.DTOs.LostReportDto>
+@model ListViewModel<projekt_io.DTOs.LostReportDto>
 
 @{
-    var counter = 1;
+    var pageNumber = Model.PaginationInfo.Page;
+    var pageSize = Model.PaginationInfo.PageSize;
+    var totalPages = Model.PaginationInfo.TotalPages;
+
+    var prevPage = pageNumber > 1 ? pageNumber - 1 : 1;
+    var nextPage = pageNumber < totalPages ? pageNumber + 1 : totalPages;
+    
+    var counter = ((pageNumber - 1) * pageSize) + 1;
     var targetUserId = ViewData["TargetUserId"] as string;
     var isAdminView = (bool?)ViewData["IsAdminView"] ?? false;
 }
@@ -45,7 +52,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var report in Model) {
+                @foreach (var report in Model.Items) {
                     <tr class="table-row">
                         <td>#@counter</td>
                         <td>
@@ -72,6 +79,9 @@
                                         <i class="fa-solid fa-check fa-xl"></i>
                                     </button>
                                 }
+                                <a title="Generuj plakat">
+                                    <i class="fa-regular fa-file-pdf fa-xl"></i>
+                                </a>
                             </td>
                         } else {
                             <td class="table-action-buttons">
@@ -92,22 +102,39 @@
         </div>
         <div class="table-pagination table-pagination-desktop">
             <p class="table-pagination-results">
-                Pokazuje <span>1</span> do <span>3</span> z
-                <span>12</span> wyników
+                Pokazuje <span>@Model.PaginationInfo.From</span> do <span>@Model.PaginationInfo.To</span> z
+                <span>@Model.PaginationInfo.TotalCount</span> wyników
             </p>
             <div>
                 <ul class="table-pagination-pages">
-                    <li>
-                        <button>
-                            <i class="fa-solid fa-angle-left fa-xl"></i>
-                        </button>
-                    </li>
-                    <li class="table-pagination-page-number">1</li>
-                    <li>
-                        <button>
-                            <i class="fa-solid fa-angle-right fa-xl"></i>
-                        </button>
-                    </li>
+                    @if (!isAdminView) {
+                        <li>
+                            <a asp-controller="Profile" asp-action="Index" asp-route-tab="reports" asp-route-reportsPage="@prevPage" asp-route-reportsPageSize="@pageSize" class="@(pageNumber == 1 ? "disabled" : "")">
+                                <i class="fa-solid fa-angle-left fa-xl"></i>
+                            </a>
+                        </li>
+                        <li class="table-pagination-page-number">@pageNumber</li>
+                        <li>
+                            <a asp-controller="Profile" asp-action="Index" asp-route-tab="reports" asp-route-reportsPage="@nextPage" asp-route-reportsPageSize="@pageSize" class="@(pageNumber == totalPages ? "disabled" : "")">
+                                <i class="fa-solid fa-angle-right fa-xl"></i>
+                            </a>
+                        </li>
+                    }
+                    else {
+                        <li>
+                            <a asp-controller="Profile" asp-action="UserProfile" asp-route-userId="@targetUserId" asp-route-tab="reports" asp-route-reportsPage="@prevPage" asp-route-reportsPageSize="@pageSize" class="@(pageNumber == 1 ? "disabled" : "")">
+                                <i class="fa-solid fa-angle-left fa-xl"></i>
+                            </a>
+                        </li>
+
+                        <li class="table-pagination-page-number">@pageNumber</li>
+
+                        <li>
+                            <a asp-controller="Profile" asp-action="UserProfile" asp-route-userId="@targetUserId" asp-route-tab="reports" asp-route-reportsPage="@nextPage" asp-route-reportsPageSize="@pageSize" class="@(pageNumber == totalPages ? "disabled" : "")">
+                                <i class="fa-solid fa-angle-right fa-xl"></i>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

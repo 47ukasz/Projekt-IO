@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.Entities;
+using projekt_io.Services;
 
 namespace projekt_io.Hubs;
 
@@ -11,29 +12,25 @@ namespace projekt_io.Hubs;
 public class ChatHub : Hub
 {
     private readonly AppDbContext _context;
+    private readonly IChatService _chatService;
 
-    public ChatHub(AppDbContext context)
-    {
+    public ChatHub(AppDbContext context, IChatService chatService) {
         _context = context;
+        _chatService = chatService;
     }
 
     private static string GroupName(string chatId) => $"chat:{chatId}";
 
-    public async Task JoinChat(string chatId)
-    {
+    public async Task JoinChat(string chatId) {
         var userId = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
-        {
             throw new HubException("Unauthorized");
-        }
 
-        var isParticipant = await _context.ChatParticipants
-            .AnyAsync(p => p.ChatId == chatId && p.UserId == userId);
+        var isParticipant = await _context.Chats.AnyAsync(c =>
+            c.Id == chatId && (c.CreatorId == userId || c.OwnerId == userId));
 
         if (!isParticipant)
-        {
             throw new HubException("Forbidden");
-        }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(chatId));
     }
@@ -43,62 +40,24 @@ public class ChatHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupName(chatId));
     }
 
-    public async Task SendMessage(string chatId, string content)
-    {
+    public async Task SendMessage(string chatId, string content) {
         var userId = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
+
+        if (string.IsNullOrWhiteSpace(userId)) {
             throw new HubException("Unauthorized");
         }
+        
+        var dto = await _chatService.SendMessageAsync(chatId, userId, content);
 
-        content = (content ?? "").Trim();
-        if (content.Length == 0)
-        {
-            throw new HubException("Empty message");
-        }
-
-        if (content.Length > 2000)
-            throw new HubException("Message too long");
-
-        // czy user ma prawo pisać w tym czacie
-        var isParticipant = await _context.ChatParticipants
-            .AnyAsync(p => p.ChatId == chatId && p.UserId == userId);
-
-        if (!isParticipant)
-        {
+        if (dto == null) {
             throw new HubException("Forbidden");
         }
-
-        // zapis do bazy
-        var message = new Message
-        {
-            Id = Guid.NewGuid().ToString(),
-            ChatId = chatId,
-            SenderId = userId,
-            Content = content,
-            SentAt = DateTime.UtcNow
-        };
-
-        _context.Messages.Add(message);
-        await _context.SaveChangesAsync();
-
-        // wyślij do wszystkich w pokoju czatu
-        var payload = new ChatMessagePayload
-        {
-            ChatId = chatId,
-            SenderId = userId,
-            Content = message.Content,
-            SentAt = message.SentAt
-        };
-
-        await Clients.Group(GroupName(chatId)).SendAsync("ReceiveMessage", payload);
-    }
-
-    public class ChatMessagePayload
-    {
-        public string ChatId { get; set; }
-        public string SenderId { get; set; }
-        public string Content { get; set; }
-        public DateTime SentAt { get; set; }
+        
+        await Clients.Group(GroupName(chatId)).SendAsync("ReceiveMessage", new {
+            chatId,
+            senderId = userId,
+            content = dto.Content,
+            sentAt = dto.SentAt
+        });
     }
 }

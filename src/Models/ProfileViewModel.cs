@@ -9,8 +9,8 @@ public class ProfileViewModel {
     public string CurrentTab { get; set; }
     public string UserFullName { get; set; }
     public string UserEmail { get; set; }
-    public List<LostReportDto> Reports { get; set; }
-    public List<SightingDto> Sightings { get; set; }
-    public List<UserDto> Users { get; set; }
-    public List<ChatListItemViewModel> Chats { get; set; } = new();
+    public ListViewModel<LostReportDto> Reports { get; set; }
+    public List<SightingDto> Sightings { get; set; } = new List<SightingDto>();
+    public List<UserDto> Users { get; set; } = new List<UserDto>();
+    public List<ChatListItemViewModel> Chats { get; set; } = new List<ChatListItemViewModel>();
 }

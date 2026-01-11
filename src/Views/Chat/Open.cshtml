@@ -1,46 +1,100 @@
-﻿@model projekt_io.Models.ChatOpenViewModel
+﻿@model projekt_io.DTOs.ChatDetailsDto
 
 @{
-    ViewData["Title"] = "Czat";
-    Layout = "_Layout";
+  ViewData["Title"] = "Czat";
+  var myId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+  var receiver = Model.Chat.Creator.Id == myId ? Model.Chat.Owner : Model.Chat.Creator;
+  var me = Model.Chat.Creator.Id == myId ? Model.Chat.Creator : Model.Chat.Owner; 
+  
+  var myInitials = $"{(me.FirstName?.FirstOrDefault() ?? '?')}{(me.LastName?.FirstOrDefault() ?? '?')}".ToUpper();
+  var receiverInitials = $"{(receiver.FirstName?.FirstOrDefault() ?? '?')}{(receiver.LastName?.FirstOrDefault() ?? '?')}".ToUpper();
 }
 
-<section class="profile-section">
-    <a asp-controller="Chat" asp-action="Index">- Wróć do listy czatów</a>
+@section Styles {
+  <link rel="stylesheet" href="~/css/main.css" />
+  <link rel="stylesheet" href="~/css/reset.css" />
+  <link rel="stylesheet" href="~/css/home.css" />
+  <link rel="stylesheet" href="~/css/profile.css" />
+  <link rel="stylesheet" href="~/css/messages.css" />
+}
 
-    <h2>Czat: @Model.OtherUserDisplay</h2>
-
-    <!-- WAŻNE: id="messagesBox" żeby JS wiedział gdzie dopisywać wiadomości -->
-    <div id="messagesBox" style="border:1px solid #ddd; padding: 12px; border-radius: 8px; max-height: 420px; overflow-y: auto;">
-        @if (Model.Messages.Count == 0)
-        {
-            <p>Brak wiadomości.</p>
-        }
-        else
-        {
-            @foreach (var m in Model.Messages)
-            {
-                <div style="margin: 8px 0; text-align:@(m.IsMine ? "right" : "left");">
-                    <div style="display:inline-block; padding:8px 10px; border-radius:10px; border:1px solid #ccc; max-width:70%;">
-                        <div>@m.Content</div>
-                        <small>@m.SentAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
-                    </div>
-                </div>
-            }
-        }
+<div class="header">
+    <p class="header-app-location">
+        <span><i class="fa-solid fa-house" style="color: #757575"></i></span>
+        <a href="">Strona główna</a>
+        >
+        <a href="">Wiadomości</a>
+        >
+        <a href="" class="current">@receiver.FirstName @receiver.LastName</a>
+    </p>
+    <div class="header-back">
+        <i class="fa-solid fa-arrow-left-long" style="color: #757575"></i>
+        <a> Wróć do zgłoszenia </a>
     </div>
-
-    <!-- Pole do wpisania + przycisk wysyłania -->
-    <div style="margin-top:12px; display:flex; gap:8px;">
-        <input id="chatInput" type="text" class="form-control" placeholder="Napisz wiadomość..." style="flex:1;" />
-        <button id="sendBtn" type="button" class="btn btn-success">Wyślij</button>
+</div>
+<div class="chat-wrapper">
+  <div class="chat-header">
+    <div class="chat-user-avatar">
+      <p>@receiverInitials</p>
     </div>
+    <div class="chat-user-info">
+      <p class="chat-user-name">@receiver.FirstName @receiver.LastName</p>
+      <p class="chat-reason">
+        <i class="fa-solid fa-shield-dog"></i> W sprawie: @Model.Chat.TargetTitle
+      </p>
+    </div>
+  </div>
+  <div class="chat-content" id="messagesBox">
+    <p class="chat-createdAt">@Model.Chat.CreatedAt.ToString("D")</p>
+    <p class="chat-warning">
+      <span>
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </span>
+      Nigdy nie ufaj drugiej osobie. Zawsze poproś o potwierdzienie informacji.
+    </p>
+    @foreach (var m in Model.Messages) {
+      <div class="message-wrapper @(m.IsMine ? "right" : "left")">
+        @if (!m.IsMine) {
+            <div class="message-avatar">
+                <p>@receiverInitials</p>
+            </div>
+        } else {
+            <div class="message-avatar">
+                <p>@myInitials</p>
+            </div>
+        }
+        <div class="message-box">
+            <p class="message">
+                @m.Content
+            </p>
+            <p class="message-createdAt">@m.SentAt.ToString("HH:mm")</p>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="chat-footer">
+      <input
+          id="chatInput"
+          type="text"
+          class="chat-message-input"
+          placeholder="Napisz wiadomość..."
+      />
+      <input type="hidden" id="myId" value="@myId" />
+      <input type="hidden" id="creatorId" value="@Model.Chat.Creator.Id" />
+      <input type="hidden" id="ownerId" value="@Model.Chat.Owner.Id" />
 
-    <div id="chatError" style="margin-top:8px; color:#c00;"></div>
+      <input type="hidden" id="creatorInitials" value="@($"{(Model.Chat.Creator.FirstName?.FirstOrDefault() ?? '?')}{(Model.Chat.Creator.LastName?.FirstOrDefault() ?? '?')}".ToUpper())" />
 
-    <!-- Hidden chatId dla JS -->
-    <input type="hidden" id="chatId" value="@Model.ChatId" />
-</section>
+      <input type="hidden" id="ownerInitials"
+             value="@($"{(Model.Chat.Owner.FirstName?.FirstOrDefault() ?? '?')}{(Model.Chat.Owner.LastName?.FirstOrDefault() ?? '?')}".ToUpper())" />
+
+      <input type="hidden" id="chatId" value="@Model.Chat.ChatId" />
+    <button id="sendBtn" class="chat-sent-button">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+<div id="chatError"></div>
 
 @section Scripts {
     <!-- CDN SignalR -->
@@ -55,35 +109,62 @@
             const err = document.getElementById("chatError");
 
             // id zalogowanego usera (wstawiane przez Razor)
-            const myId = "@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value";
+            const myId = document.getElementById("myId").value;
+            const creatorId = document.getElementById("creatorId")?.value;
+            const ownerId = document.getElementById("ownerId")?.value;
+            const creatorInitials = document.getElementById("creatorInitials")?.value || "??";
+            const ownerInitials = document.getElementById("ownerInitials")?.value || "??";
 
-            function escapeHtml(text) {
-                const div = document.createElement("div");
-                div.innerText = text ?? "";
-                return div.innerHTML;
+            function initialsFor(senderId) {
+                if (senderId === creatorId) return creatorInitials;
+                if (senderId === ownerId) return ownerInitials;
+                return "??";
             }
 
-            function appendMessage(content, sentAt, isMine) {
+            function appendMessage(content, sentAt, isMine, initials = "??") {
                 const wrapper = document.createElement("div");
-                wrapper.style.margin = "8px 0";
-                wrapper.style.textAlign = isMine ? "right" : "left";
+                wrapper.classList.add("message-wrapper");
+                wrapper.classList.add(isMine ? "right" : "left");
 
-                const bubble = document.createElement("div");
-                bubble.style.display = "inline-block";
-                bubble.style.padding = "8px 10px";
-                bubble.style.borderRadius = "10px";
-                bubble.style.border = "1px solid #ccc";
-                bubble.style.maxWidth = "70%";
+                // avatar
+                const avatar = document.createElement("div");
+                avatar.classList.add("message-avatar");
+
+                const avatarText = document.createElement("p");
+                avatarText.textContent = initials;
+                avatar.appendChild(avatarText);
+
+                // box wiadomości
+                const boxEl = document.createElement("div");
+                boxEl.classList.add("message-box");
+
+                const messageP = document.createElement("p");
+                messageP.classList.add("message");
+                messageP.textContent = content;
+
+                const timeP = document.createElement("p");
+                timeP.classList.add("message-createdAt");
 
                 const dt = new Date(sentAt);
-                const dateStr = isNaN(dt.getTime()) ? "" : dt.toLocaleString();
+                timeP.textContent = isNaN(dt.getTime())
+                    ? ""
+                    : dt.toLocaleTimeString("pl-PL", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
 
-                bubble.innerHTML = `
-                            <div>${escapeHtml(content)}</div>
-                            <small>${escapeHtml(dateStr)}</small>
-                        `;
+                boxEl.appendChild(messageP);
+                boxEl.appendChild(timeP);
 
-                wrapper.appendChild(bubble);
+                // kolejność elementów (lewo/prawo)
+                if (isMine) {
+                    wrapper.appendChild(avatar);
+                    wrapper.appendChild(boxEl);
+                } else {
+                    wrapper.appendChild(avatar);
+                    wrapper.appendChild(boxEl);
+                }
+
                 box.appendChild(wrapper);
 
                 // scroll na dół
@@ -105,9 +186,19 @@
                 if (msg.chatId !== chatId) return;
 
                 const isMine = msg.senderId === myId;
-                appendMessage(msg.content, msg.sentAt, isMine);
+                appendMessage(msg.content, msg.sentAt, isMine, initialsFor(msg.senderId));
             });
 
+            connection.onreconnected(async () => {
+                try {
+                    await connection.invoke("JoinChat", chatId);
+                    err.textContent = "";
+                } catch (e) {
+                    err.textContent = "Błąd ponownego połączenia czatu.";
+                    console.error(e);
+                }
+            });
+            
             async function start() {
                 try {
                     await connection.start();

@@ -191,10 +191,26 @@
     min-width: 3.5rem;
 }
 
-.table-pagination-pages button {
+.table-pagination-pages a {
+    color: #000;
+    text-decoration: none;
     padding: 0.7rem;
     background: none;
     border: none;
+}
+
+.table-pagination-pages a i {
+    color: #000;
+}
+
+.table-pagination-pages a.disabled {
+    pointer-events: none;
+    color: var(--light-gray);
+    cursor: not-allowed;
+}
+
+.table-pagination-pages a.disabled i {
+    color: var(--light-gray);
 }
 
 .table-pagination-page-number {

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using projekt_io.Data;
 using projekt_io.DTOs;
 using projekt_io.Entities;
+using projekt_io.Helpers;
 using projekt_io.Mappers;
 
 namespace projekt_io.Services;
@@ -139,6 +140,18 @@ public class LostReportService : ILostReportService {
         var reportDtos = reports.Select(r => LostReportMapper.ToDto(r)).ToList();
         
         return reportDtos;
+    }
+
+    public async Task<(List<LostReportDto> Items, int TotalCount)?> GetLostReportsByIdAsync(string ownerId, int page = 1, int pageSize = 5) {
+        if (string.IsNullOrWhiteSpace(ownerId)) {
+            return null;
+        }
+
+        var query = _db.LostReports.AsNoTracking().Include(r => r.Animal).Include(r => r.Location).Where(r => r.UserId == ownerId).OrderByDescending(r => r.LostAt);
+
+        var (entities, total) = await query.ToPagedAsync(page, pageSize);
+
+        return (entities.Select(LostReportMapper.ToDto).ToList(), total);
     }
 
     public async Task<List<LostReportDto>> GetAllLostReportsAsync() {

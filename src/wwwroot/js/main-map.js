@@ -58,7 +58,7 @@ function renderPoints(points) {
                     </div>
                 </div>
                 <div class="map-popup-buttons">
-                    <a class="popup-chat-button">
+                    <a href="#" class="popup-chat-button" data-report-id="${p.LostReportId}">
                        <i class="fa-solid fa-message" style="color: #ff9b2f;"></i>
                         <span>Rozpocznij chat</span>
                     </a>
@@ -82,4 +82,32 @@ function renderPoints(points) {
 
 document.addEventListener('DOMContentLoaded', () => {
     renderPoints(initialPoints);
+});
+
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".popup-chat-button");
+    if (!btn) return;
+
+    e.preventDefault();
+
+    const reportId = btn.dataset.reportId;
+    if (!reportId) return;
+
+    try {
+        const res = await fetch(`/chat/create/${reportId}`, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "fetch"
+            }
+        });
+
+        if (res.ok) {
+            window.location.href = res.url;
+            return;
+        }
+
+        console.error("Create chat failed", res.status);
+    } catch (err) {
+        console.error(err);
+    }
 });

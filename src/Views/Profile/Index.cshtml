@@ -10,9 +10,6 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/main.css" />
-    <link rel="stylesheet" href="~/css/user-page.css" />
-    <link rel="stylesheet" href="~/css/home.css" />
-    <link rel="stylesheet" href="~/css/admin.css" />
     <link rel="stylesheet" href="~/css/profile.css" />
 }
 
@@ -59,7 +56,7 @@
         </li>
         @if (!Model.IsAdminView) {
             <li>
-                <a asp-controller="Profile" asp-action="Index" asp-route-tab="messages" class="@(Model.CurrentTab == "messages" ? "profile-nav-active" : "")">
+                <a asp-controller="Profile" asp-action="Index" asp-route-tab="chats" class="@(Model.CurrentTab == "chats" ? "profile-nav-active" : "")">
                     <i class="fa-solid fa-clipboard-list"></i
                     ><span>Wiadomości</span>
                 </a>
@@ -70,15 +67,8 @@
                     ><span>Powiadomienia</span>
                 </a>
             </li>
-            <li>
-                <a asp-controller="Profile" asp-action="Index" asp-route-tab="history" class="@(Model.CurrentTab == "history" ? "profile-nav-active" : "")">
-                    <i class="fa-solid fa-clipboard-list"></i
-                    ><span>Historia zgłoszeń</span>
-                </a>
-            </li>
         }
-        @if (User.IsInRole("Admin") && !Model.IsAdminView)
-        {
+        @if (User.IsInRole("Admin") && !Model.IsAdminView) {
             <li>
                 <a asp-controller="Profile" asp-action="Index" asp-route-tab="users"
                    class="@(Model.CurrentTab == "users" ? "profile-nav-active" : "")">
@@ -97,21 +87,15 @@
 
 @switch (Model.CurrentTab)
 {
-    case "messages":
+    case "chats":
         if (!Model.IsAdminView) {
-            <partial name="Partials/_MessagesTable" />
+            <partial name="Partials/_ChatsTable" model="@Model.Chats"/>
         }
         break;
 
     case "notifications":
         if (!Model.IsAdminView) {
             <partial name="Partials/_NotificationsTable" />
-        }
-        break;
-
-    case "history":
-        if (!Model.IsAdminView) {
-            <partial name="Partials/_HistoryTable" />
         }
         break;
 

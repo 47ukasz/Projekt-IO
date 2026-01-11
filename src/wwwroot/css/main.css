@@ -397,6 +397,50 @@ a.btn-outline {
     background-color: var(--red);
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: normal;
+    margin-bottom: 2rem;
+}
+
+.header-app-location {
+    color: var(--medium-gray);
+    font-size: 1.2rem;
+}
+
+.header-app-location a {
+    padding: 0.5rem;
+    text-decoration: none;
+    color: var(--medium-gray);
+}
+
+.header-app-location a.current {
+    font-weight: bold;
+}
+
+.header-app-location a:hover {
+    text-decoration: underline;
+}
+
+.header-back {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    gap: 1rem;
+}
+
+.header-back a {
+    color: var(--medium-gray);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.header-back a:hover {
+    text-decoration: underline;
+}
+
 @media (min-width: 500px) {
     .pagination-list {
         width: 60%;

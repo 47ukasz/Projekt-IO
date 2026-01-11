@@ -23,6 +23,7 @@ public class MapService : IMapService {
         foreach (var lostReport in lostReports) {
             var point = new MapPointViewModel {
                 LostReportId = lostReport.Id,
+                UserId = lostReport.UserId,
                 Latitude = lostReport.Location.Latitude,
                 Longitude = lostReport.Location.Longitude,
                 Status = lostReport.Status,
@@ -38,6 +39,7 @@ public class MapService : IMapService {
 
         foreach (var sighting in sightings) {
             var point = new MapPointViewModel() {
+                UserId = sighting.UserId,
                 SightingId = sighting.Id,
                 LostReportId = sighting.LostReport.Id,
                 Latitude = sighting.Location.Latitude,

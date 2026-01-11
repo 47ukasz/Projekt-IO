@@ -30,7 +30,7 @@ public class NavViewComponent : ViewComponent {
         }
 
         if (isAdmin) {
-            navItems.Add(("Panel administratora", "/admin/panel"));
+            navItems.Add(("Panel administratora", "/profile?tab=users"));
         }
 
         var viewModel = new NavViewModel() {

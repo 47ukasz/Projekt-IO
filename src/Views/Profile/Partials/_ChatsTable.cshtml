@@ -1,36 +1,70 @@
-﻿@model List<projekt_io.Models.ChatListItemViewModel>
+@model List<projekt_io.Models.ChatListItemViewModel>
+@{
+    var counter = 1;
+}
 
-<section class="panel-section">
-    <h3>Moje czaty</h3>
-
-    @if (Model == null || Model.Count == 0)
-    {
-        <p>Brak czatów.</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Z kim</th>
-                    <th>Ostatnia wiadomość</th>
-                    <th>Data</th>
-                    <th>Akcje</th>
+<section class="profile-section">
+    <div class="table-wrapper">
+        <div class="table-description">
+            <p class="table-description-header">Moje Wiadomości</p>
+            <p class="table-description-info">
+                Przeglądaj swoje aktywne wiadomości
+            </p>
+        </div>
+        <div class="overflow overflow-table">
+            <table class="table">
+                <thead>
+                <tr class="table-row">
+                    <th>ID</th>
+                    <th>ODBIORCA WIADOMOŚCI</th>
+                    <th>OSTATNIA WIADOMOŚĆ</th>
+                    <th>DATA</th>
+                    <th>AKCJE</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 @foreach (var c in Model)
                 {
-                    <tr>
-                        <td>@c.OtherUserDisplay</td>
+                    <tr class="table-row">
+                        <td>@counter</td>
+                        <td>@c.ReceiverLastName @c.ReceiverFirstName</td>
                         <td>@c.LastMessagePreview</td>
                         <td>@(c.LastMessageAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
-                        <td>
-                            <a class="btn btn-sm btn-primary" href="/chat/@c.ChatId">Otwórz</a>
+                        <td class="table-action-buttons">
+                            <a asp-controller="Chat" asp-action="Open" asp-route-id="@c.ChatId" title="Otwórz chat">
+                                <i class="fa-solid fa-angle-right fa-xl"></i>
+                            </a>
                         </td>
                     </tr>
+                    counter += 1;
                 }
-            </tbody>
-        </table>
-    }
+                </tbody>
+            </table>
+        </div>
+        <div class="table-pagination table-pagination-mobile">
+            <button>Poprzednie</button>
+            <button>Następne</button>
+        </div>
+        <div class="table-pagination table-pagination-desktop">
+            <p class="table-pagination-results">
+                Pokazuje <span>1</span> do <span>3</span> z
+                <span>12</span> wyników
+            </p>
+            <div>
+                <ul class="table-pagination-pages">
+                    <li>
+                        <button>
+                            <i class="fa-solid fa-angle-left fa-xl"></i>
+                        </button>
+                    </li>
+                    <li class="table-pagination-page-number">1</li>
+                    <li>
+                        <button>
+                            <i class="fa-solid fa-angle-right fa-xl"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </section>
